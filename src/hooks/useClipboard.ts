@@ -1,0 +1,24 @@
+// =====================================================
+// hooks/useClipboard.ts
+// Hook for clipboard operations
+// =====================================================
+
+import { useState, useCallback } from 'react';
+
+export const useClipboard = () => {
+  const [copied, setCopied] = useState(false);
+
+  const copy = useCallback(async (text: string): Promise<boolean> => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      return true;
+    } catch (error) {
+      console.error('Failed to copy:', error);
+      return false;
+    }
+  }, []);
+
+  return { copied, copy };
+};

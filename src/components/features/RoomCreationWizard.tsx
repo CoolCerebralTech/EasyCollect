@@ -1,0 +1,271 @@
+// =====================================================
+// components/features/RoomCreationWizard.tsx
+// Multi-step wizard for creating rooms
+// =====================================================
+
+import React, { useState } from 'react';
+import { Card } from '../ui/Card';
+import { Input } from '../ui/Input';
+import { TextArea } from '../ui/TextArea';
+import { Select, type SelectOption } from '../ui/Select';
+import { Button } from '../ui/Button';
+import { ProgressBar } from '../ui/ProgressBar';
+import { ValidationService } from '../../services/validation.service';
+import { CURRENCY_LIST } from '../../constants/currencies';
+import type { CreateRoomDTO, Currency } from '../../lib/types';
+
+export interface RoomCreationWizardProps {
+  onSubmit: (data: CreateRoomDTO) => Promise<void>;
+  onCancel?: () => void;
+}
+
+export const RoomCreationWizard: React.FC<RoomCreationWizardProps> = ({
+  onSubmit,
+  onCancel,
+}) => {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState<Partial<CreateRoomDTO>>({
+    title: '',
+    description: '',
+    targetAmount: undefined,
+    currency: 'KES',
+    pin: '',
+    expiresInDays: 30,
+  });
+  const [pinConfirm, setPinConfirm] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const totalSteps = 3;
+  const progress = (step / totalSteps) * 100;
+
+  const currencyOptions: SelectOption[] = CURRENCY_LIST.map(c => ({
+    value: c.code,
+    label: `${c.flag} ${c.code} - ${c.name}`,
+  }));
+
+  const validateStep1 = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    const titleValidation = ValidationService.validateTitle(formData.title || '');
+    if (!titleValidation.isValid) {
+      newErrors.title = titleValidation.error || 'Invalid title';
+    }
+
+    const descValidation = ValidationService.validateDescription(formData.description || '');
+    if (!descValidation.isValid) {
+      newErrors.description = descValidation.error || 'Invalid description';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateStep2 = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (formData.targetAmount) {
+      const amountValidation = ValidationService.validateTargetAmount(formData.targetAmount);
+      if (!amountValidation.isValid) {
+        newErrors.targetAmount = amountValidation.error || 'Invalid amount';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateStep3 = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    const pinValidation = ValidationService.validatePIN(formData.pin || '');
+    if (!pinValidation.isValid) {
+      newErrors.pin = pinValidation.error || 'Invalid PIN';
+    }
+
+    if (formData.pin !== pinConfirm) {
+      newErrors.pinConfirm = 'PINs do not match';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    let isValid = false;
+
+    switch (step) {
+      case 1:
+        isValid = validateStep1();
+        break;
+      case 2:
+        isValid = validateStep2();
+        break;
+      case 3:
+        isValid = validateStep3();
+        break;
+    }
+
+    if (isValid) {
+      if (step < totalSteps) {
+        setStep(step + 1);
+      } else {
+        handleSubmit();
+      }
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+      setErrors({});
+    }
+  };
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    await onSubmit(formData as CreateRoomDTO);
+    setSubmitting(false);
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <Card>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Create New Room
+          </h2>
+          <p className="text-gray-600">
+            Step {step} of {totalSteps}
+          </p>
+          <ProgressBar value={progress} className="mt-4" />
+        </div>
+
+        {/* Step 1: Basic Info */}
+        {step === 1 && (
+          <div className="space-y-6">
+            <Input
+              label="Room Title"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              error={errors.title}
+              placeholder="e.g., Chama Monthly Contribution"
+              required
+              autoFocus
+            />
+
+            <TextArea
+              label="Description (Optional)"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              error={errors.description}
+              placeholder="Add details about this contribution..."
+              rows={4}
+            />
+          </div>
+        )}
+
+        {/* Step 2: Financial Details */}
+        {step === 2 && (
+          <div className="space-y-6">
+            <Select
+              label="Currency"
+              options={currencyOptions}
+              value={formData.currency}
+              onChange={(value) => setFormData({ ...formData, currency: value as Currency })}
+            />
+
+            <Input
+              label="Target Amount (Optional)"
+              type="number"
+              step="0.01"
+              min="0"
+              value={formData.targetAmount || ''}
+              onChange={(e) => setFormData({ ...formData, targetAmount: parseFloat(e.target.value) || undefined })}
+              error={errors.targetAmount}
+              placeholder="Leave empty for open-ended collection"
+              hint="Setting a target helps track progress"
+            />
+
+            <Input
+              label="Expires in (days)"
+              type="number"
+              min="1"
+              max="365"
+              value={formData.expiresInDays}
+              onChange={(e) => setFormData({ ...formData, expiresInDays: parseInt(e.target.value) || 30 })}
+              hint="Room will become read-only after this period"
+            />
+          </div>
+        )}
+
+        {/* Step 3: Security */}
+        {step === 3 && (
+          <div className="space-y-6">
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+              <h3 className="font-semibold text-orange-900 mb-2">
+                🔐 Secure Your Room
+              </h3>
+              <p className="text-sm text-orange-800">
+                Create a PIN to protect steward access. This PIN will be required to edit contributions and view sensitive information.
+              </p>
+            </div>
+
+            <Input
+              label="Create PIN (4-6 digits)"
+              type="password"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              value={formData.pin}
+              onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '') })}
+              error={errors.pin}
+              placeholder="••••••"
+              required
+            />
+
+            <Input
+              label="Confirm PIN"
+              type="password"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              value={pinConfirm}
+              onChange={(e) => setPinConfirm(e.target.value.replace(/\D/g, ''))}
+              error={errors.pinConfirm}
+              placeholder="••••••"
+              required
+            />
+          </div>
+        )}
+
+        {/* Navigation */}
+        <div className="flex gap-3 mt-8">
+          {step > 1 && (
+            <Button
+              variant="secondary"
+              onClick={handleBack}
+            >
+              Back
+            </Button>
+          )}
+          <Button
+            onClick={handleNext}
+            loading={submitting}
+            fullWidth
+          >
+            {step === totalSteps ? 'Create Room' : 'Next'}
+          </Button>
+          {onCancel && step === 1 && (
+            <Button
+              variant="ghost"
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+          )}
+        </div>
+      </Card>
+    </div>
+  );
+};
