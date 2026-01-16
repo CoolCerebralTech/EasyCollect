@@ -1,7 +1,17 @@
 // =====================================================
-// constants/app-config.ts
+// src/constants/app-config.ts
 // Global application configuration
 // =====================================================
+
+// Helper to determine the real URL automatically
+const getBaseUrl = () => {
+  // If we are in the browser, grab the current address (e.g., https://your-app.vercel.app)
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  // Fallback for build time or environment variables
+  return import.meta.env.VITE_APP_URL || 'http://localhost:5173';
+};
 
 export const APP_CONFIG = {
   name: 'The Ledger',
@@ -61,8 +71,8 @@ export const APP_CONFIG = {
   
   // URLs
   urls: {
-    baseUrl: import.meta.env.VITE_APP_URL || 'http://localhost:5173',
+    baseUrl: getBaseUrl(), // ✅ UPDATED: Uses the smart function
     whatsappBase: 'https://wa.me',
-    githubRepo: 'https://github.com/yourorg/ledger',
+    githubRepo: 'https://github.com/CoolCerebralTech/Ledger',
   },
 } as const;
