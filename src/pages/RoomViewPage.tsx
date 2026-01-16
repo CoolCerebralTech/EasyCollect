@@ -30,6 +30,7 @@ import type { AddContributionDTO, Contribution } from '../lib/types';
 export const RoomViewPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const { room, loading, error, refetch, isSteward, canEdit } = useRoom(token || null);
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showContributionForm, setShowContributionForm] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -39,7 +40,6 @@ export const RoomViewPage: React.FC = () => {
   const contributionsHook = useContributions(token || '');
   const analytics = useAnalytics(room);
 
-  // Search and filter contributions
   const {
     filteredContributions,
     stats: searchStats,
@@ -71,7 +71,7 @@ export const RoomViewPage: React.FC = () => {
     );
   }
 
-  // Steward needs PIN authentication
+  // Steward PIN Gate
   if (isSteward && !isAuthenticated) {
     return <PINGate token={token!} onAuthenticated={() => setIsAuthenticated(true)} />;
   }
@@ -89,7 +89,6 @@ export const RoomViewPage: React.FC = () => {
     return success;
   };
 
-  // Determine which contributions to show based on filters
   const displayContributions = isFiltered ? filteredContributions : room.contributions;
 
   return (
@@ -100,7 +99,13 @@ export const RoomViewPage: React.FC = () => {
       </div>
 
       {/* Header */}
-      <div className={`${isSteward ? 'bg-gradient-to-r from-orange-600 to-orange-700' : 'bg-gradient-to-r from-green-600 to-green-700'} text-white shadow-md`}>
+      <div
+        className={`${
+          isSteward
+            ? 'bg-gradient-to-r from-orange-600 to-orange-700'
+            : 'bg-gradient-to-r from-green-600 to-green-700'
+        } text-white shadow-md`}
+      >
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div className="flex-1">
@@ -110,18 +115,24 @@ export const RoomViewPage: React.FC = () => {
                   {room.room.status}
                 </Badge>
               </div>
+
               {room.room.description && (
-                <p className="text-green-100 mb-4 text-lg">{room.room.description}</p>
+                <p className="text-green-100 mb-4 text-lg">
+                  {room.room.description}
+                </p>
               )}
+
               <div className="flex items-center gap-4 text-sm bg-black/10 inline-flex p-2 rounded-lg">
-                <span className="flex items-center">👥 {room.room.contributor_count} contributors</span>
+                <span>👥 {room.room.contributor_count} contributors</span>
                 <span className="w-px h-4 bg-white/30"></span>
                 {room.room.target_amount && (
-                  <span className="flex items-center font-semibold">
-                    🎯 {FormatUtils.formatCurrency(room.room.total_collected, room.room.currency)} / {FormatUtils.formatCurrency(room.room.target_amount, room.room.currency)}
+                  <span className="font-semibold">
+                    🎯 {FormatUtils.formatCurrency(room.room.total_collected, room.room.currency)} /{' '}
+                    {FormatUtils.formatCurrency(room.room.target_amount, room.room.currency)}
                   </span>
                 )}
               </div>
+
               {deadlineStatus && (
                 <div className="mt-3">
                   <Badge variant={deadlineStatus.status === 'urgent' ? 'danger' : 'warning'}>
@@ -130,22 +141,30 @@ export const RoomViewPage: React.FC = () => {
                 </div>
               )}
             </div>
+
             {isSteward && (
-              <div className="md:ml-4">
-                <Badge variant="warning" size="lg" className="shadow-sm">
-                  🔐 Steward Mode
-                </Badge>
-              </div>
+              <Badge variant="warning" size="lg" className="shadow-sm">
+                🔐 Steward Mode
+              </Badge>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Truth Banner */}
+      <div className="max-w-7xl mx-auto px-4 pt-6">
+        <Alert type="info">
+          💡 <strong>How this works:</strong> Contributions are paid externally
+          (e.g. M-Pesa). The steward manually records payments here so everyone
+          can track progress transparently.
+        </Alert>
       </div>
 
       {/* Actions Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 gap-2 no-scrollbar">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar">
               <Button
                 variant={activeTab === 'visual' ? 'primary' : 'ghost'}
                 size="sm"
@@ -168,7 +187,8 @@ export const RoomViewPage: React.FC = () => {
                 📊 Statistics
               </Button>
             </div>
-            <div className="flex w-full sm:w-auto gap-2">
+
+            <div className="flex gap-2 w-full sm:w-auto">
               <Button variant="secondary" size="sm" fullWidth onClick={() => setShowShareModal(true)}>
                 Share
               </Button>
@@ -184,7 +204,6 @@ export const RoomViewPage: React.FC = () => {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-        {/* Search/Filter */}
         {(activeTab === 'timeline' || room.contributions.length > 10) && (
           <ContributionSearch
             filters={filters}
@@ -195,7 +214,6 @@ export const RoomViewPage: React.FC = () => {
           />
         )}
 
-        {/* Filter Message */}
         {isFiltered && (
           <Alert type="info">
             Showing {resultsCount} of {room.contributions.length} contributions
@@ -217,8 +235,6 @@ export const RoomViewPage: React.FC = () => {
 
         {activeTab === 'timeline' && (
           <ContributionTimeline
-            // Casting here because 'RoomContribution' is a subset of 'Contribution' for display purposes
-            // The Timeline component needs to be flexible or we cast
             contributions={displayContributions as unknown as Contribution[]}
             currency={room.room.currency}
           />
@@ -249,14 +265,12 @@ export const RoomViewPage: React.FC = () => {
       )}
 
       {showShareModal && (
-      <ShareRoomModal
-        isOpen={showShareModal}
-        onClose={() => setShowShareModal(false)}
-        roomDetails={room}
-        // ✅ No more 'as any'. Type definition now knows this exists.
-        // We default to current token if viewer_token is missing (fallback)
-        viewerToken={room.room.viewer_token || token || ''} 
-      />
+        <ShareRoomModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          roomDetails={room}
+          viewerToken={room.room.viewer_token || token || ''}
+        />
       )}
     </div>
   );

@@ -166,7 +166,7 @@ export const HomePage: React.FC = () => {
                 Smart Features
               </h3>
               <p className="text-gray-600">
-                Auto-parse M-Pesa SMS, WhatsApp reminders, and visual tracking.
+                Smart M-Pesa confirmation workflow, WhatsApp reminders, and visual tracking.
               </p>
             </div>
             <div className="text-center p-6 rounded-xl hover:bg-green-50 transition-colors">

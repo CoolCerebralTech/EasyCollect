@@ -14,22 +14,22 @@ import { db } from '../lib/database.service';
 import { LocalStorageService } from '../services/storage.service';
 import { TokenUtils } from '../utils/token.utils';
 import { useToast } from '../components/ui/Toast';
-import type { CreateRoomDTO, CreateRoomResponse } from '../lib/types'; // Fixed Import
+import type { CreateRoomDTO, CreateRoomResponse } from '../lib/types';
 
 export const CreateRoomPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
+
   const [createdRoom, setCreatedRoom] = useState<CreateRoomResponse | null>(null);
+  const [hasSavedStewardLink, setHasSavedStewardLink] = useState(false);
 
   const handleCreateRoom = async (data: CreateRoomDTO) => {
-    // 1. Call Backend
     const result = await db.rooms.createRoom(data);
 
     if (result.success) {
       const roomData = result.data;
-      
-      // 2. Save "Steward" access to LocalStorage automatically
-      // This ensures if they close the tab, they can find it on HomePage
+
+      // Save steward access locally for quick resume
       LocalStorageService.saveRoom({
         roomId: roomData.room_id,
         title: data.title,
@@ -42,12 +42,11 @@ export const CreateRoomPage: React.FC = () => {
         currency: data.currency,
       });
 
-      // 3. Show Success State
       setCreatedRoom(roomData);
-      
+
       showToast({
         type: 'success',
-        message: 'Room created successfully!',
+        message: 'Room created successfully',
       });
     } else {
       showToast({
@@ -58,16 +57,15 @@ export const CreateRoomPage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    if (createdRoom) {
-      navigate(`/room/${createdRoom.steward_token}`);
-    }
+    if (!createdRoom) return;
+    navigate(`/room/${createdRoom.steward_token}`);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Back Button */}
-        <button 
+        <button
           onClick={() => navigate('/')}
           className="mb-6 flex items-center text-gray-600 hover:text-green-700 transition-colors"
         >
@@ -84,24 +82,27 @@ export const CreateRoomPage: React.FC = () => {
         />
       </div>
 
-      {/* Success Modal (The "Golden Ticket" Moment) */}
+      {/* Success Modal */}
       {createdRoom && (
         <Modal
-          isOpen={!!createdRoom}
-          onClose={() => {}} // Prevent closing by clicking outside
-          title="🎉 Room Created Successfully!"
+          isOpen
+          onClose={() => {}}
+          title="Room created successfully"
           size="lg"
           closeOnOutsideClick={false}
         >
           <div className="space-y-6">
-            <Alert type="warning" title="Important: Save These Links">
-              These links are the keys to your room. They will <strong>only be shown once</strong>.
+            <Alert type="warning" title="Keep these links safe">
+              These links control access to your room.  
+              The <strong>steward link allows editing contributions</strong> and should be kept private.
             </Alert>
 
+            {/* Steward Link */}
             <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
               <label className="block text-sm font-bold text-yellow-900 mb-2">
-                👑 Steward Link (For You)
+                👑 Steward Link (Private)
               </label>
+
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -113,19 +114,36 @@ export const CreateRoomPage: React.FC = () => {
                 <CopyButton
                   text={TokenUtils.generateRoomUrl(createdRoom.steward_token)}
                   label="Copy"
-                  successMessage="Steward link copied!"
+                  successMessage="Steward link copied"
                   className="border-yellow-300 hover:bg-yellow-100"
                 />
               </div>
+
               <p className="mt-2 text-xs text-yellow-800">
-                ⚠️ <strong>Do not share this link.</strong> It allows editing contributions.
+                ⚠️ Anyone with this link can <strong>edit contributions and amounts</strong>.  
+                Share it only with trusted stewards.
               </p>
+
+              <div className="flex items-start gap-3 mt-4">
+                <input
+                  id="confirm-save"
+                  type="checkbox"
+                  checked={hasSavedStewardLink}
+                  onChange={(e) => setHasSavedStewardLink(e.target.checked)}
+                  className="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded"
+                />
+                <label htmlFor="confirm-save" className="text-sm text-gray-700">
+                  I have saved the <strong>steward link</strong> somewhere safe
+                </label>
+              </div>
             </div>
 
+            {/* Viewer Link */}
             <div className="bg-green-50 p-4 rounded-lg border border-green-200">
               <label className="block text-sm font-bold text-green-900 mb-2">
-                👀 Viewer Link (For the Group)
+                👀 Viewer Link (Share with the Group)
               </label>
+
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -137,18 +155,32 @@ export const CreateRoomPage: React.FC = () => {
                 <CopyButton
                   text={TokenUtils.generateRoomUrl(createdRoom.viewer_token)}
                   label="Copy"
-                  successMessage="Viewer link copied!"
+                  successMessage="Viewer link copied"
                   className="border-green-300 hover:bg-green-100"
                 />
               </div>
+
               <p className="mt-2 text-xs text-green-800">
-                Share this link on WhatsApp so everyone can see the progress.
+                Share this link on WhatsApp so everyone can view contribution progress.
               </p>
             </div>
 
-            <Button onClick={handleContinue} fullWidth size="lg" className="mt-4">
+            {/* Continue */}
+            <Button
+              onClick={handleContinue}
+              fullWidth
+              size="lg"
+              className="mt-4"
+              disabled={!hasSavedStewardLink}
+            >
               Enter Room Dashboard →
             </Button>
+
+            {!hasSavedStewardLink && (
+              <p className="text-xs text-center text-gray-500 mt-2">
+                Please confirm you’ve saved the steward link before continuing
+              </p>
+            )}
           </div>
         </Modal>
       )}
