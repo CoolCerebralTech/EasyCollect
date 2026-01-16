@@ -1,246 +1,158 @@
-📂 Project: Contribution Room (Internal Name: "The Ledger")
+💚 The Ledger: Contribution Room
 
-Status: High Priority / Full Build
-Stack: React (Vite/TS), Tailwind, Supabase (No Auth)
+Trust-First Financial Coordination for Communities.
+No Accounts. No App Store. Just a Link.
 
-1. Product Philosophy
+The Ledger is a lightweight, mobile-first web application designed for Chamas, Harambees, Funeral Committees, and Short-term Fundraisers. It replaces Excel spreadsheets and WhatsApp lists with a live, visual, and transparent digital room.
 
-We are building a contribution visualization tool optimized for high-trust, informal communities (Chamas, Harambees, Funeral Committees).
+🚀 Core Philosophy
 
-The Golden Rules:
+Rooms, Not Users: We do not require emails, passwords, or phone verification. The "Room" is the atomic unit.
 
-No Accounts: We do not ask for email, password, or phone number verification.
+Link is Identity:
 
-Rooms, not Users: The atomic unit of the app is the "Room."
+Steward Link: (Secret) Allows editing, marking payments, and settings. Protected by a PIN.
 
-Link is Identity: Your permission level is determined solely by the URL you possess.
+Viewer Link: (Public) Read-only access for the community to track progress.
 
-Visual Trust: We replace spreadsheets with visual nodes and timelines to create social momentum.
+Visual Trust: Contributions are visualized as a node map to create social momentum without shaming.
 
-2. Core Architecture: "The Two-Link System"
+Low Friction: Optimized for WhatsApp sharing and M-Pesa behavior.
 
-We are abandoning traditional RBAC (Role-Based Access Control) for a Token-Based Access system.
+⚡ Key Features
 
-A. The Steward (Admin)
+SMART M-Pesa Paste: Copy an M-Pesa SMS -> Paste into the app -> It auto-extracts Name, Amount, and Code.
 
-Access: via domain.com/room/[steward-token]
+Visual Contribution Map: An SVG-based visualization where every contribution is a node.
 
-Capabilities: Create room, edit settings, add/edit payments, delete payments, close room.
+Offline-First Architecture: Works with poor connectivity. Queues updates and syncs when online.
 
-Security Layer: To prevent accidental sharing of the admin link, accessing this route must require a 4-digit PIN (set during creation).
+WhatsApp Integration: Deep links for reminders and sharing (no business API required).
 
-B. The Witness (Viewer)
+Social Receipts: Generates downloadable PNG receipts for proof of payment.
 
-Access: via domain.com/room/[viewer-token]
+Analytics Dashboard: Velocity tracking, daily trends, and completion projections.
 
-Capabilities: View timeline, view visualization, export summary, download receipt.
+🛠 Tech Stack
 
-Restriction: Read-only.
+Frontend: React 18, Vite, TypeScript
 
-3. Feature Specifications (The "Must-Haves")
-Feature 1: The "Smart Paste" Input
+Styling: Tailwind CSS (Custom Design System)
 
-The Steward should never manually type a transaction if they have the SMS.
+State Management: React Hooks + Context (No heavy Redux/Zustand)
 
-UI: A text area labeled "Paste M-Pesa SMS or Type Manually".
+Backend: Supabase (PostgreSQL)
 
-Logic:
+Security: Row Level Security (RLS) via Postgres RPCs (No Supabase Auth)
 
-User pastes text.
+Persistence: LocalStorage (Session) + IndexedDB (Receipts)
 
-System runs Regex to detect: Code, Amount, Sender Name, Time.
-
-Auto-fills the input fields.
-
-Steward confirms and saves.
-
-Regex Pattern (Reference):
-
+📂 Project Structure
 code
-Regex
+Bash
 download
 content_copy
 expand_less
-([A-Z0-9]{10})\sConfimed\.\sKsh([0-9,.]+)\ssent\sto\s(.+)\son\s(\d{1,2}/\d{1,2}/\d{2})\sat\s(\d{1,2}:\d{2}\s[AP]M)
-Feature 2: Visual Contribution Map
+src/
+├── components/
+│   ├── common/       # Reusable UI atoms (Button, Input, Card)
+│   ├── features/     # Complex blocks (VisualMap, Timeline, Wizard)
+│   └── layout/       # Page wrappers
+├── constants/        # Config, Colors, Currencies
+├── hooks/            # Custom React Hooks (useRoom, useOfflineQueue)
+├── lib/              # Database clients and Types
+├── pages/            # Route Views (Home, Room, Create)
+├── services/         # Business Logic (M-Pesa Regex, Analytics, Storage)
+└── utils/            # Helpers (Formatting, Colors, Validation)
+🚦 Getting Started
+1. Prerequisites
 
-Instead of a list, we show momentum.
+Node.js 18+
 
-Component: Canvas/SVG based layout.
+npm or yarn
 
-Logic:
-
-Gray Node: A generic "potential" slot (if target amount exists) or omitted entirely in "Open Mode".
-
-Green Node: A confirmed payment.
-
-Node Radius: Proportional to contribution_amount.
-
-Interaction: Clicking a node opens the details card (Name, Time, Amount).
-
-Feature 3: The "Soft Reminder" Generator
-
-We do not integrate with WhatsApp Business API. We use Deep Links.
-
-UI: A "Remind" button next to a pledged/unpaid member (or generic reminder for group).
-
-Logic:
-
-App checks current_date vs deadline_date.
-
-App selects template:
-
-Scenario A (Early): "Hi [Name], just a gentle reminder for the contribution..."
-
-Scenario B (Urgent): "Hey [Name], we are finalizing the list today..."
-
-Scenario C (Late): "Hi [Name], we missed your contribution..."
-
-Action: Triggers window.open('https://wa.me/?text=[encoded_message]').
-
-Feature 4: Social Receipt Cards
-
-Digital bragging rights.
-
-Trigger: Viewer clicks on their own transaction -> "Get Receipt".
-
-Output: Generates a downloadable PNG (using html-to-image or similar).
-
-Design: Professional card showing: "Certified Contribution," Room Name, Amount, Date, and a QR code linking back to the Room.
-
-Feature 5: LocalStorage History
-
-Since there are no accounts, we must prevent Stewards from losing their links.
-
-Logic:
-
-On Room Create, save room_id, title, and steward_token to browser localStorage.
-
-On Home Page load, check localStorage.
-
-Display: "Resume Active Rooms" list.
-
-4. Technical Implementation & Database
-Database Schema (Supabase / PostgreSQL)
-
-We need strict Row Level Security (RLS) or Rpc-based access because we have no auth.uid().
-
-Table: rooms
-
+2. Installation
 code
-SQL
+Bash
 download
 content_copy
 expand_less
-id              UUID PK
-title           TEXT
-description     TEXT
-target_amount   NUMERIC (Optional)
-currency        TEXT (Default 'KES')
-steward_token   UUID (Index, Secret)
-viewer_token    UUID (Index, Public)
-pin_hash        TEXT (Bcrypt hash of the 4-digit PIN)
-status          TEXT ('active', 'archived')
-created_at      TIMESTAMPTZ
-expires_at      TIMESTAMPTZ
-settings        JSONB (e.g., { "allow_pledges": true })
+# Clone the repository
+git clone https://github.com/your-org/the-ledger.git
 
-Table: contributions
+# Enter directory
+cd the-ledger
+
+# Install dependencies
+npm install
+3. Environment Setup
+
+Create a .env file in the root directory:
 
 code
-SQL
+Env
 download
 content_copy
 expand_less
-id              UUID PK
-room_id         UUID FK -> rooms.id
-name            TEXT
-amount          NUMERIC
-payment_method  TEXT ('MPESA', 'CASH')
-transaction_ref TEXT (Optional, e.g., M-Pesa Code)
-status          TEXT ('confirmed', 'pledged')
-confirmed_at    TIMESTAMPTZ
-notes           TEXT
-Security Logic (The "Link-Native" approach)
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_APP_URL=http://localhost:5173
+4. Database Setup (Supabase)
 
-Since we are not using Supabase Auth, we cannot use standard RLS policies based on user ID. We will use PostgreSQL Functions (RPC) for all sensitive operations to ensure the token is validated on the server side.
+Since we use a custom security model, you must run the SQL scripts provided in the /sql folder (or documented below) in your Supabase SQL Editor.
 
-1. Viewing Data (Viewer Token)
+Enable Extensions: pgcrypto, uuid-ossp.
 
-Create a Postgres Function get_room_details(token_input uuid).
+Create Tables: rooms, contributions, room_activity_log.
 
-Logic: Selects data only if rooms.viewer_token OR rooms.steward_token matches input.
+Create RPC Functions: This app relies on create_room, get_room_details, etc.
 
-2. Modifying Data (Steward Token)
+Enable RLS: Run the "Lockdown Script" to prevent direct API access to tables.
 
-Create Postgres Functions: add_contribution, update_contribution.
+5. Run Local Server
+code
+Bash
+download
+content_copy
+expand_less
+npm run dev
 
-Logic: Each function accepts steward_token_input.
+Open http://localhost:5173 to see the app.
 
-Validation: IF (SELECT count(*) FROM rooms WHERE steward_token = steward_token_input) = 0 THEN RAISE EXCEPTION 'Unauthorized';
+🔐 Security Model (The "Serverless Fortress")
 
-3. The PIN Challenge
+This app uses a unique security architecture suitable for high-trust, low-tech environments:
 
-The UI for the Steward Link asks for a PIN first.
+No auth.users: We do not use Supabase Authentication.
 
-The frontend compares the hash (or sends PIN to server to validate) before unlocking the "Edit" UI.
+Token-Based Access: Access is granted solely by possessing a UUID token in the URL.
 
-5. Development Roadmap (No MVPs, Parallel Build)
+RPC Gatekeepers:
 
-Phase 1: The Engine (Backend & Logic)
+The frontend cannot run SELECT * FROM rooms. It is blocked by RLS.
 
-Set up Supabase project.
+The frontend must call rpc/get_room_details(token).
 
-Implement the SQL Tables.
+The Database Function validates the token and decides what data to return (e.g., hiding the Steward Token if you are a Viewer).
 
-Write the RPC functions (Server-side logic for token validation).
+PIN Protection: Sensitive write operations require a 4-6 digit PIN, hashed via bcrypt inside the database.
 
-Test: Ensure you cannot edit a room using the Viewer Token.
+📱 Mobile Optimizations
 
-Phase 2: The Steward Experience
+Touch Targets: All buttons are min 48px height.
 
-Room Creation Wizard (Title -> Target -> PIN).
+Whatsapp Friendly: Text receipts and share messages are pre-formatted for WhatsApp.
 
-The Dashboard (Timeline View).
+Data Saver: SVG visualizations are lightweight compared to heavy charts.
 
-Complex Task: Implement the "Smart Paste" M-Pesa Parser.
+🤝 Contributing
 
-Phase 3: The Viewer Experience
+Consistency: Use the services/ layer for logic. Do not write complex logic inside Components.
 
-Read-only view.
+Styling: Use the src/components/ui primitives. Avoid writing raw Tailwind classes for buttons/inputs in feature files.
 
-The "Visual Nodes" Component (D3.js or simple SVG).
+Types: Update src/types/index.ts if you modify the database schema.
 
-Receipt Generation (Canvas API).
+📄 License
 
-Phase 4: Polish & Resilience
-
-LocalStorage implementation for history.
-
-WhatsApp deep-linking logic.
-
-Edge cases: What happens if the room expires? (Make it Read-Only).
-
-6. Design System Guidelines (Tailwind)
-
-Vibe: Clean, Trustworthy, "Kenyan Modern".
-
-Colors:
-
-Primary: Safaricom Green variants (Trust/Money).
-
-Steward Mode Alert: Burnt Orange (Warning: You are Admin).
-
-Pending/Pledged: Slate Gray.
-
-Typography: Large, legible sans-serif (Inter or DM Sans).
-
-Mobile First: 100% of users are on phones. Buttons must be thumb-friendly (48px height min).
-
-7. Immediate Next Steps
-
-Backend Lead: Initialize Supabase and script the RPC security functions.
-
-Frontend Lead: Set up the routing logic (/room/:token) and the PIN barrier.
-
-Let's build the standard for informal finance.
+MIT License. Built for the Community.
