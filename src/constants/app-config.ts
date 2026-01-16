@@ -14,8 +14,8 @@ const getBaseUrl = () => {
 };
 
 export const APP_CONFIG = {
-  name: 'The Ledger',
-  version: '1.0.0',
+  name: 'Contribution Room',
+  version: '2.0.0',
   description: 'Contribution tracking for high-trust communities',
   
   // Room settings
