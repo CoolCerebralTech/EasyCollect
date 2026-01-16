@@ -1,0 +1,27 @@
+<svg
+  width="120"
+  height="120"
+  viewBox="0 0 120 120"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Outer circle (room / community) -->
+  <circle
+    cx="60"
+    cy="60"
+    r="54"
+    stroke="#16A34A"
+    stroke-width="8"
+    fill="none"
+  />
+
+  <!-- Contribution bars -->
+  <rect x="34" y="60" width="10" height="26" rx="3" fill="#16A34A"/>
+  <rect x="50" y="46" width="10" height="40" rx="3" fill="#16A34A"/>
+  <rect x="66" y="34" width="10" height="52" rx="3" fill="#16A34A"/>
+
+  <!-- Small dots (people) -->
+  <circle cx="39" cy="92" r="3" fill="#16A34A"/>
+  <circle cx="55" cy="92" r="3" fill="#16A34A"/>
+  <circle cx="71" cy="92" r="3" fill="#16A34A"/>
+</svg>
