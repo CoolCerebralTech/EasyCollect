@@ -4,7 +4,6 @@
 // =====================================================
 
 import React, { useState } from 'react';
-import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { TextArea } from '../ui/TextArea';
 import { Select, type SelectOption } from '../ui/Select';
@@ -17,11 +16,14 @@ import type { CreateRoomDTO, Currency } from '../../lib/types';
 export interface RoomCreationWizardProps {
   onSubmit: (data: CreateRoomDTO) => Promise<void>;
   onCancel?: () => void;
+  // ✅ Added proper prop to receive loading state from parent
+  isSubmitting?: boolean;
 }
 
 export const RoomCreationWizard: React.FC<RoomCreationWizardProps> = ({
   onSubmit,
   onCancel,
+  isSubmitting = false,
 }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<Partial<CreateRoomDTO>>({
@@ -34,7 +36,6 @@ export const RoomCreationWizard: React.FC<RoomCreationWizardProps> = ({
   });
   const [pinConfirm, setPinConfirm] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitting, setSubmitting] = useState(false);
 
   const totalSteps = 3;
   const progress = (step / totalSteps) * 100;
@@ -123,33 +124,39 @@ export const RoomCreationWizard: React.FC<RoomCreationWizardProps> = ({
   };
 
   const handleSubmit = async () => {
-    setSubmitting(true);
+    // We rely on the parent (CreateRoomPage) to handle the async call state
+    // via the isSubmitting prop
     await onSubmit(formData as CreateRoomDTO);
-    setSubmitting(false);
   };
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card>
+      {/* We use standard div instead of Card if parent provides container style, 
+          but keeping Card here if it's reused elsewhere. 
+          If styling duplicates, you can remove <Card> wrapper. */}
+      <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Create New Room
-          </h2>
-          <p className="text-gray-600">
-            Step {step} of {totalSteps}
-          </p>
-          <ProgressBar value={progress} className="mt-4" />
+          <div className="flex justify-between items-end mb-2">
+             <h2 className="text-xl font-bold text-gray-900">
+              Create New Room
+            </h2>
+            <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+              Step {step} of {totalSteps}
+            </span>
+          </div>
+          
+          <ProgressBar value={progress} className="mt-2 h-2" />
         </div>
 
         {/* Step 1: Basic Info */}
         {step === 1 && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fadeIn">
             <Input
               label="Room Title"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               error={errors.title}
-              placeholder="e.g., Chama Monthly Contribution"
+              placeholder="e.g., Wedding Committee, Office Party"
               required
               autoFocus
             />
@@ -167,7 +174,7 @@ export const RoomCreationWizard: React.FC<RoomCreationWizardProps> = ({
 
         {/* Step 2: Financial Details */}
         {step === 2 && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fadeIn">
             <Select
               label="Currency"
               options={currencyOptions}
@@ -201,27 +208,33 @@ export const RoomCreationWizard: React.FC<RoomCreationWizardProps> = ({
 
         {/* Step 3: Security */}
         {step === 3 && (
-          <div className="space-y-6">
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold text-orange-900 mb-2">
-                🔐 Secure Your Room
-              </h3>
-              <p className="text-sm text-orange-800">
-                Create a PIN to protect steward access. This PIN will be required to edit contributions and view sensitive information.
-              </p>
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+              <div className="flex gap-3">
+                <span className="text-xl">🔐</span>
+                <div>
+                  <h3 className="font-semibold text-amber-900 mb-1">
+                    Secure Your Room
+                  </h3>
+                  <p className="text-sm text-amber-800 leading-relaxed">
+                    Create a PIN to protect admin access. You will need this PIN (plus the admin link) to edit the room later.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <Input
-              label="Create PIN (4-6 digits)"
+              label="Create PIN (4 digits)"
               type="password"
               inputMode="numeric"
               pattern="[0-9]*"
-              maxLength={6}
+              maxLength={4}
               value={formData.pin}
               onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '') })}
               error={errors.pin}
-              placeholder="••••••"
+              placeholder="••••"
               required
+              className="text-center text-xl tracking-widest"
             />
 
             <Input
@@ -229,43 +242,49 @@ export const RoomCreationWizard: React.FC<RoomCreationWizardProps> = ({
               type="password"
               inputMode="numeric"
               pattern="[0-9]*"
-              maxLength={6}
+              maxLength={4}
               value={pinConfirm}
               onChange={(e) => setPinConfirm(e.target.value.replace(/\D/g, ''))}
               error={errors.pinConfirm}
-              placeholder="••••••"
+              placeholder="••••"
               required
+              className="text-center text-xl tracking-widest"
             />
           </div>
         )}
 
         {/* Navigation */}
-        <div className="flex gap-3 mt-8">
-          {step > 1 && (
+        <div className="flex gap-3 mt-8 pt-6 border-t border-slate-100">
+          {step > 1 ? (
             <Button
               variant="secondary"
               onClick={handleBack}
+              disabled={isSubmitting}
             >
               Back
             </Button>
+          ) : (
+             // Show cancel only on first step
+             onCancel && (
+              <Button
+                variant="ghost"
+                onClick={onCancel}
+              >
+                Cancel
+              </Button>
+            )
           )}
+          
           <Button
             onClick={handleNext}
-            loading={submitting}
+            loading={isSubmitting}
             fullWidth
+            className="flex-1"
           >
-            {step === totalSteps ? 'Create Room' : 'Next'}
+            {step === totalSteps ? 'Create Room' : 'Next Step'}
           </Button>
-          {onCancel && step === 1 && (
-            <Button
-              variant="ghost"
-              onClick={onCancel}
-            >
-              Cancel
-            </Button>
-          )}
         </div>
-      </Card>
+      </div>
     </div>
   );
 };
