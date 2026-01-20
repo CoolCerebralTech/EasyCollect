@@ -247,7 +247,7 @@ export const RoomViewPage: React.FC = () => {
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
           roomDetails={room}
-          viewerToken={room.room.viewer_token || token || ''}
+          viewerToken={room.room.viewer_token || ''}
         />
       )}
     </div>
