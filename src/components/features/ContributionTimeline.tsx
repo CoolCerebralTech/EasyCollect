@@ -10,12 +10,12 @@ import { EmptyState } from '../ui/EmptyState';
 import { FormatUtils } from '../../utils/format.utils';
 import { DateService } from '../../services/date.service';
 import { PAYMENT_METHODS } from '../../constants/payment-methods';
-import type { Contribution, Currency } from '../../lib/types';
+import type { RoomContribution, Currency } from '../../lib/types';
 
 export interface ContributionTimelineProps {
-  contributions: Contribution[];
+  contributions: RoomContribution[];
   currency: Currency;
-  onContributionClick?: (contribution: Contribution) => void;
+  onContributionClick?: (contribution: RoomContribution) => void;
   showActions?: boolean;
 }
 
@@ -65,17 +65,17 @@ export const ContributionTimeline: React.FC<ContributionTimelineProps> = ({
           return (
             <div
               key={contribution.id}
-              className={`p-6 hover:bg-gray-50 transition-colors ${
+              className={`p-4 sm:p-6 hover:bg-gray-50 transition-colors ${
                 onContributionClick ? 'cursor-pointer' : ''
               }`}
               onClick={() => onContributionClick && onContributionClick(contribution)}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">{paymentMethod.icon}</span>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">
+                    <span className="text-2xl flex-shrink-0">{paymentMethod.icon}</span>
+                    <div className="min-w-0">
+                      <h4 className="font-semibold text-gray-900 truncate">
                         {contribution.name}
                       </h4>
                       <p className="text-sm text-gray-600">
@@ -86,26 +86,28 @@ export const ContributionTimeline: React.FC<ContributionTimelineProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 mt-3">
-                    <Badge variant={contribution.status === 'confirmed' ? 'success' : 'warning'}>
-                      {contribution.status}
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    <Badge variant={contribution.status === 'confirmed' ? 'success' : 'warning'} size="sm">
+                      {contribution.status === 'confirmed' ? '✓ Paid' : '⏳ Pledged'}
                     </Badge>
-                    {contribution.transaction_ref && (
-                      <span className="text-xs font-mono text-gray-500">
-                        {contribution.transaction_ref}
+                    
+                    {/* Show transaction code for PAID items only (transparency) */}
+                    {contribution.status === 'confirmed' && contribution.transaction_ref && (
+                      <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        Ref: {contribution.transaction_ref}
                       </span>
                     )}
                   </div>
 
                   {contribution.notes && (
-                    <p className="text-sm text-gray-600 mt-2">
+                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">
                       {contribution.notes}
                     </p>
                   )}
                 </div>
 
-                <div className="text-right ml-4">
-                  <p className="text-2xl font-bold text-gray-900">
+                <div className="text-right flex-shrink-0">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">
                     {FormatUtils.formatCurrency(contribution.amount, currency)}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">

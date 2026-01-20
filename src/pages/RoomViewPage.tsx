@@ -5,9 +5,9 @@
 
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRoom } from '../hooks/useRoom';
 import { useContributions } from '../hooks/useContributions';
 import { useAnalytics } from '../hooks/useAnalytics';
+import { useRoom } from '../hooks/useRoom';
 import { useContributionSearch, type ContributionFilters } from '../hooks/useContributionSearch';
 import { LoadingOverlay } from '../components/ui/LoadingOverlay';
 import { Alert } from '../components/ui/Alert';
@@ -25,12 +25,11 @@ import { ContributionSearch } from '../components/features/ContributionSearch';
 import { OfflineIndicator } from '../components/features/OfflineIndicator';
 import { FormatUtils } from '../utils/format.utils';
 import { NotificationService } from '../services/notification.service';
-import type { AddContributionDTO, Contribution } from '../lib/types';
+import type { AddContributionDTO } from '../lib/types';
 
 export const RoomViewPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const { room, loading, error, refetch, isSteward, canEdit } = useRoom(token || null);
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showContributionForm, setShowContributionForm] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -40,6 +39,7 @@ export const RoomViewPage: React.FC = () => {
   const contributionsHook = useContributions(token || '');
   const analytics = useAnalytics(room);
 
+  // Search and filter contributions
   const {
     filteredContributions,
     stats: searchStats,
@@ -71,7 +71,7 @@ export const RoomViewPage: React.FC = () => {
     );
   }
 
-  // Steward PIN Gate
+  // Steward needs PIN authentication
   if (isSteward && !isAuthenticated) {
     return <PINGate token={token!} onAuthenticated={() => setIsAuthenticated(true)} />;
   }
@@ -89,6 +89,7 @@ export const RoomViewPage: React.FC = () => {
     return success;
   };
 
+  // Determine which contributions to show based on filters
   const displayContributions = isFiltered ? filteredContributions : room.contributions;
 
   return (
@@ -99,40 +100,27 @@ export const RoomViewPage: React.FC = () => {
       </div>
 
       {/* Header */}
-      <div
-        className={`${
-          isSteward
-            ? 'bg-gradient-to-r from-orange-600 to-orange-700'
-            : 'bg-gradient-to-r from-green-600 to-green-700'
-        } text-white shadow-md`}
-      >
+      <div className={`${isSteward ? 'bg-gradient-to-r from-orange-600 to-orange-700' : 'bg-gradient-to-r from-green-600 to-green-700'} text-white`}>
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <div className="flex items-start justify-between">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2 flex-wrap">
+              <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold">{room.room.title}</h1>
                 <Badge variant={room.room.status === 'active' ? 'success' : 'neutral'}>
                   {room.room.status}
                 </Badge>
               </div>
-
               {room.room.description && (
-                <p className="text-green-100 mb-4 text-lg">
-                  {room.room.description}
-                </p>
+                <p className="text-green-100 mb-4">{room.room.description}</p>
               )}
-
-              <div className="flex items-center gap-4 text-sm bg-black/10 inline-flex p-2 rounded-lg">
-                <span>👥 {room.room.contributor_count} contributors</span>
-                <span className="w-px h-4 bg-white/30"></span>
+              <div className="flex items-center gap-4 text-sm">
+                <span>💚 {room.room.contributor_count} contributors</span>
                 {room.room.target_amount && (
-                  <span className="font-semibold">
-                    🎯 {FormatUtils.formatCurrency(room.room.total_collected, room.room.currency)} /{' '}
-                    {FormatUtils.formatCurrency(room.room.target_amount, room.room.currency)}
+                  <span>
+                    🎯 {FormatUtils.formatCurrency(room.room.total_collected, room.room.currency)} / {FormatUtils.formatCurrency(room.room.target_amount, room.room.currency)}
                   </span>
                 )}
               </div>
-
               {deadlineStatus && (
                 <div className="mt-3">
                   <Badge variant={deadlineStatus.status === 'urgent' ? 'danger' : 'warning'}>
@@ -141,59 +129,47 @@ export const RoomViewPage: React.FC = () => {
                 </div>
               )}
             </div>
-
             {isSteward && (
-              <Badge variant="warning" size="lg" className="shadow-sm">
-                🔐 Steward Mode
-              </Badge>
+              <div className="ml-4">
+                <Badge variant="warning" size="lg">
+                  🔐 Steward Mode
+                </Badge>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Truth Banner */}
-      <div className="max-w-7xl mx-auto px-4 pt-6">
-        <Alert type="info">
-          💡 <strong>How this works:</strong> Contributions are paid externally
-          (e.g. M-Pesa). The steward manually records payments here so everyone
-          can track progress transparently.
-        </Alert>
-      </div>
-
       {/* Actions Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex gap-2 overflow-x-auto no-scrollbar">
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex gap-2">
               <Button
                 variant={activeTab === 'visual' ? 'primary' : 'ghost'}
-                size="sm"
                 onClick={() => setActiveTab('visual')}
               >
                 🎨 Visual
               </Button>
               <Button
                 variant={activeTab === 'timeline' ? 'primary' : 'ghost'}
-                size="sm"
                 onClick={() => setActiveTab('timeline')}
               >
                 📋 Timeline
               </Button>
               <Button
                 variant={activeTab === 'stats' ? 'primary' : 'ghost'}
-                size="sm"
                 onClick={() => setActiveTab('stats')}
               >
                 📊 Statistics
               </Button>
             </div>
-
-            <div className="flex gap-2 w-full sm:w-auto">
-              <Button variant="secondary" size="sm" fullWidth onClick={() => setShowShareModal(true)}>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={() => setShowShareModal(true)}>
                 Share
               </Button>
               {canEdit && (
-                <Button size="sm" fullWidth onClick={() => setShowContributionForm(true)}>
+                <Button onClick={() => setShowContributionForm(true)}>
                   Add Contribution
                 </Button>
               )}
@@ -204,6 +180,7 @@ export const RoomViewPage: React.FC = () => {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
+        {/* Search/Filter - Only show for timeline view or when there are many contributions */}
         {(activeTab === 'timeline' || room.contributions.length > 10) && (
           <ContributionSearch
             filters={filters}
@@ -214,6 +191,7 @@ export const RoomViewPage: React.FC = () => {
           />
         )}
 
+        {/* Show filtered results message */}
         {isFiltered && (
           <Alert type="info">
             Showing {resultsCount} of {room.contributions.length} contributions
@@ -235,7 +213,7 @@ export const RoomViewPage: React.FC = () => {
 
         {activeTab === 'timeline' && (
           <ContributionTimeline
-            contributions={displayContributions as unknown as Contribution[]}
+            contributions={displayContributions}
             currency={room.room.currency}
           />
         )}
