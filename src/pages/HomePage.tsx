@@ -17,16 +17,20 @@ export const HomePage: React.FC = () => {
   const { rooms, removeRoom } = useLocalStorage();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const handleRemoveRoom = (roomId: string, e: React.MouseEvent) => {
+ const handleRemoveRoom = (roomId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Remove this room from history? (The room will still exist on the server, just not in your list)')) {
+    // OLD SCARY MESSAGE:
+    // if (window.confirm('Remove this room from history? (The room will still exist on the server)')) {
+    
+    // NEW TRUSTWORTHY MESSAGE:
+    if (window.confirm('Remove this group from your local dashboard? \n\nNOTE: This only clears it from this phone. Other members can still access the group using the link.')) {
       setDeletingId(roomId);
       setTimeout(() => {
         removeRoom(roomId);
         setDeletingId(null);
       }, 300);
     }
-  };
+    };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
