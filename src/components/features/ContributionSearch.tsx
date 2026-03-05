@@ -9,7 +9,7 @@ import { Select, type SelectOption } from '../ui/Select';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
-import { PAYMENT_METHODS } from '../../constants/payment-methods';
+import { PAYMENT_METHODS } from '../../lib/constants';
 import type { ContributionFilters } from '../../hooks/useContributionSearch';
 
 export interface ContributionSearchProps {

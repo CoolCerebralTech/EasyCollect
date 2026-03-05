@@ -10,7 +10,7 @@ import { Select, type SelectOption } from '../ui/Select';
 import { Button } from '../ui/Button';
 import { ProgressBar } from '../ui/ProgressBar';
 import { ValidationService } from '../../services/validation.service';
-import { CURRENCY_LIST } from '../../constants/currencies';
+import { CURRENCY_LIST } from '../../lib/constants';
 import type { CreateRoomDTO, Currency } from '../../lib/app.types';
 
 export interface RoomCreationWizardProps {

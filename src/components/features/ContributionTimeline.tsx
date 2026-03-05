@@ -9,7 +9,7 @@ import { Badge } from '../ui/Badge';
 import { EmptyState } from '../ui/EmptyState';
 import { FormatUtils } from '../../utils/format.utils';
 import { DateService } from '../../services/date.service';
-import { PAYMENT_METHODS } from '../../constants/payment-methods';
+import { PAYMENT_METHODS } from '../../lib/constants';
 import type { RoomContribution, Currency } from '../../lib/app.types';
 
 export interface ContributionTimelineProps {

@@ -11,7 +11,7 @@ import { FormatUtils } from '../../utils/format.utils';
 import { ColorUtils } from '../../utils/color.utils';
 import { DateService } from '../../services/date.service';
 import type { RoomContribution, Currency } from '../../lib/types';
-import { APP_CONFIG } from '../../constants/app-config';
+import { APP_CONFIG } from '../../lib/constants';
 
 export interface VisualContributionMapProps {
   contributions: RoomContribution[];

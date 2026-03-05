@@ -3,7 +3,7 @@
 // Complete abstraction over Supabase RPC functions
 // =====================================================
 
-import { supabase } from './supabase';
+import { supabase } from './supabase.service';
 import {
   type CreateRoomDTO,
   type CreateRoomResponse,
@@ -15,7 +15,7 @@ import {
   type RoomStatistics,
   type ApiResponse,
   LedgerError,
-} from './types';
+} from '../lib/app.types';
 
 // =====================================================
 // Error Handling Utility

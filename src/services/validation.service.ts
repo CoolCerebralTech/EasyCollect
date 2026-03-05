@@ -4,6 +4,7 @@
 // =====================================================
 
 import { APP_CONFIG } from '../lib/constants';
+import { ValidationUtils } from '../utils/validation.utils';
 import type { PaymentMethod, Currency } from '../lib/types';
 import { PAYMENT_METHODS } from '../lib/constants';
 
@@ -38,7 +39,7 @@ export class ValidationService {
     }
 
     // Check for invalid characters
-    if (/<|>|script/i.test(trimmed)) {
+    if (ValidationUtils.hasInvalidCharacters(trimmed)) {
       return { isValid: false, error: 'Title contains invalid characters' };
     }
 
@@ -141,7 +142,7 @@ export class ValidationService {
     }
 
     // Check for invalid characters
-    if (/<|>|script/i.test(trimmed)) {
+    if (ValidationUtils.hasInvalidCharacters(trimmed)) {
       return { isValid: false, error: 'Name contains invalid characters' };
     }
 

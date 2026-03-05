@@ -12,7 +12,7 @@ import { Card } from '../ui/Card';
 import { Divider } from '../ui/Divider';
 import { SmartPasteInput } from './SmartPasteInput';
 import { ValidationService } from '../../services/validation.service';
-import { PAYMENT_METHODS } from '../../constants/payment-methods';
+import { PAYMENT_METHODS } from '../../lib/constants';
 import type { AddContributionDTO, PaymentMethod, Currency } from '../../lib/app.types';
 import type { ParsedMpesaTransaction } from '../../services/mpesa-parser.service';
 
