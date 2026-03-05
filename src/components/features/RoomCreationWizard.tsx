@@ -11,7 +11,7 @@ import { Button } from '../ui/Button';
 import { ProgressBar } from '../ui/ProgressBar';
 import { ValidationService } from '../../services/validation.service';
 import { CURRENCY_LIST } from '../../constants/currencies';
-import type { CreateRoomDTO, Currency } from '../../lib/types';
+import type { CreateRoomDTO, Currency } from '../../lib/app.types';
 
 export interface RoomCreationWizardProps {
   onSubmit: (data: CreateRoomDTO) => Promise<void>;

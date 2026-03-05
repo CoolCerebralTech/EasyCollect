@@ -3,7 +3,7 @@
 // Enhanced storage with localStorage and IndexedDB support
 // =====================================================
 
-import { APP_CONFIG } from '../constants/app-config';
+import { APP_CONFIG } from '../lib/constants';
 import type { RoomStatus } from '../lib/types';
 
 // =====================================================

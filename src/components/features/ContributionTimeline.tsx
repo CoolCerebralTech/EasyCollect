@@ -10,7 +10,7 @@ import { EmptyState } from '../ui/EmptyState';
 import { FormatUtils } from '../../utils/format.utils';
 import { DateService } from '../../services/date.service';
 import { PAYMENT_METHODS } from '../../constants/payment-methods';
-import type { RoomContribution, Currency } from '../../lib/types';
+import type { RoomContribution, Currency } from '../../lib/app.types';
 
 export interface ContributionTimelineProps {
   contributions: RoomContribution[];

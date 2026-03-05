@@ -13,7 +13,7 @@ import { Divider } from '../ui/Divider';
 import { SmartPasteInput } from './SmartPasteInput';
 import { ValidationService } from '../../services/validation.service';
 import { PAYMENT_METHODS } from '../../constants/payment-methods';
-import type { AddContributionDTO, PaymentMethod, Currency } from '../../lib/types';
+import type { AddContributionDTO, PaymentMethod, Currency } from '../../lib/app.types';
 import type { ParsedMpesaTransaction } from '../../services/mpesa-parser.service';
 
 export interface ContributionFormProps {

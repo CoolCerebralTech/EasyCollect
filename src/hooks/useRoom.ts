@@ -4,7 +4,7 @@
 // =====================================================
 
 import { useState, useEffect, useCallback } from 'react';
-import { db } from '../lib/database.service';
+import { db } from '../services/db.service';
 import type { RoomDetails } from '../lib/types';
 import { LocalStorageService } from '../services/storage.service';
 

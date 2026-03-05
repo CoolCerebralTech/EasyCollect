@@ -3,7 +3,7 @@
 // Color generation and manipulation for visualizations
 // =====================================================
 
-import { COLORS } from '../constants/colors';
+import { COLORS } from '../lib/constants';
 
 export class ColorUtils {
   /**

@@ -4,7 +4,7 @@
 // =====================================================
 
 import { useCallback, useEffect, useState } from 'react';
-import { db } from '../lib/database.service';
+import { db } from '../services/db.service';
 import { LocalStorageService } from '../services/storage.service';
 
 export const usePINGate = (token: string) => {

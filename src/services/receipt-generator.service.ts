@@ -6,7 +6,7 @@
 import type { Contribution, Currency } from '../lib/types';
 import { FormatUtils } from '../utils/format.utils';
 import { DateService } from './date.service';
-import { APP_CONFIG } from '../constants/app-config';
+import { APP_CONFIG } from '../lib/constants';
 
 export interface ReceiptData {
   contribution: Contribution;

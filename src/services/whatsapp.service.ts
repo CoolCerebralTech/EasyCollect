@@ -3,9 +3,9 @@
 // WhatsApp deep link generation and message formatting
 // =====================================================
 
-import { APP_CONFIG } from '../constants/app-config';
-import { REMINDER_TEMPLATES, type ReminderParams } from '../constants/reminder-templates';
-import type { Currency } from '../lib/types';
+import { APP_CONFIG } from '../lib/constants';
+import { REMINDER_TEMPLATES, type ReminderParams } from '../lib/constants';
+import type { Currency } from '../lib/app.types';
 
 export class WhatsAppService {
   /**

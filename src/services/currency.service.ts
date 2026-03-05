@@ -3,8 +3,8 @@
 // Currency conversion and formatting
 // =====================================================
 
-import { CURRENCIES, EXCHANGE_RATES } from '../constants/currencies';
-import type { Currency } from '../lib/types';
+import { CURRENCIES, EXCHANGE_RATES } from '../lib/constants';
+import type { Currency } from '../lib/app.types';
 import { FormatUtils } from '../utils/format.utils';
 
 export class CurrencyService {

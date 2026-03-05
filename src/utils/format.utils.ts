@@ -4,7 +4,7 @@
 // =====================================================
 
 import type { Currency } from '../lib/types';
-import { CURRENCIES } from '../constants/currencies';
+import { CURRENCIES } from '../lib/constants';
 
 export class FormatUtils {
   /**

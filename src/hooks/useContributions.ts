@@ -4,8 +4,8 @@
 // =====================================================
 
 import { useState } from 'react';
-import { db } from '../lib/database.service';
-import type { AddContributionDTO, UpdateContributionDTO } from '../lib/types';
+import { db } from '../services/db.service';
+import type { AddContributionDTO, UpdateContributionDTO } from '../lib/app.types';
 import { useToast } from '../components/ui/Toast';
 
 export const useContributions = (stewardToken: string) => {

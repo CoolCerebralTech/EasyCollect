@@ -3,9 +3,9 @@
 // Comprehensive validation for all inputs
 // =====================================================
 
-import { APP_CONFIG } from '../constants/app-config';
+import { APP_CONFIG } from '../lib/constants';
 import type { PaymentMethod, Currency } from '../lib/types';
-import { PAYMENT_METHODS } from '../constants/payment-methods';
+import { PAYMENT_METHODS } from '../lib/constants';
 
 export interface ValidationResult {
   isValid: boolean;

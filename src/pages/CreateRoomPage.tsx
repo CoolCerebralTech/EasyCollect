@@ -8,7 +8,7 @@ import { RoomCreationWizard } from '../components/features/RoomCreationWizard';
 import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { CopyButton } from '../components/ui/CopyButton';
-import { db } from '../lib/database.service';
+import { db } from '../services/db.service';
 import { LocalStorageService } from '../services/storage.service';
 import { TokenUtils } from '../utils/token.utils';
 import { useToast } from '../components/ui/Toast';

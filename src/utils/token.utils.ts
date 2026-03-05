@@ -3,7 +3,7 @@
 // Token validation and URL generation
 // =====================================================
 
-import { APP_CONFIG } from '../constants/app-config';
+import { APP_CONFIG } from '../lib/constants';
 
 export class TokenUtils {
   /**
