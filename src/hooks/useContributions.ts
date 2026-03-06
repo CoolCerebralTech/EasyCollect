@@ -3,73 +3,44 @@
 // Hook for managing contributions
 // =====================================================
 
-import { useState } from 'react';
 import { db } from '../services/db.service';
 import type { AddContributionDTO, UpdateContributionDTO } from '../lib/app.types';
-import { useToast } from '../components/ui/Toast';
+import { useAsyncAction } from './useAsyncAction'; // Import the new hook
 
 export const useContributions = (stewardToken: string) => {
-  const [loading, setLoading] = useState(false);
-  const { showToast } = useToast();
+  const { execute, loading } = useAsyncAction();
 
   const addContribution = async (contribution: AddContributionDTO) => {
-    setLoading(true);
-    const result = await db.contributions.addContribution(stewardToken, contribution);
-    setLoading(false);
-
-    if (result.success) {
-      showToast({
-        type: 'success',
-        message: 'Contribution added successfully!',
-      });
-      return true;
-    } else {
-      showToast({
-        type: 'error',
-        message: result.error.message,
-      });
-      return false;
-    }
+    const success = await execute(
+      () => db.contributions.addContribution(stewardToken, contribution),
+      {
+        successMessage: 'Contribution added successfully!',
+        errorMessage: 'Failed to add contribution', // Generic message, specific error will be shown by useAsyncAction
+      }
+    );
+    return success !== undefined; // Return true if successful, false if error (as execute returns undefined on error)
   };
 
   const updateContribution = async (update: UpdateContributionDTO) => {
-    setLoading(true);
-    const result = await db.contributions.updateContribution(stewardToken, update);
-    setLoading(false);
-
-    if (result.success) {
-      showToast({
-        type: 'success',
-        message: 'Contribution updated successfully!',
-      });
-      return true;
-    } else {
-      showToast({
-        type: 'error',
-        message: result.error.message,
-      });
-      return false;
-    }
+    const success = await execute(
+      () => db.contributions.updateContribution(stewardToken, update),
+      {
+        successMessage: 'Contribution updated successfully!',
+        errorMessage: 'Failed to update contribution',
+      }
+    );
+    return success !== undefined;
   };
 
   const deleteContribution = async (contributionId: string) => {
-    setLoading(true);
-    const result = await db.contributions.deleteContribution(stewardToken, contributionId);
-    setLoading(false);
-
-    if (result.success) {
-      showToast({
-        type: 'success',
-        message: 'Contribution deleted successfully!',
-      });
-      return true;
-    } else {
-      showToast({
-        type: 'error',
-        message: result.error.message,
-      });
-      return false;
-    }
+    const success = await execute(
+      () => db.contributions.deleteContribution(stewardToken, contributionId),
+      {
+        successMessage: 'Contribution deleted successfully!',
+        errorMessage: 'Failed to delete contribution',
+      }
+    );
+    return success !== undefined;
   };
 
   return {
