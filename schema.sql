@@ -1,5 +1,5 @@
 -- =====================================================
--- THE LEDGER: Complete Database Schema
+-- THE LEDGER: Complete Database Schema (Updated to 'Organizer' Terminology)
 -- No Authentication, Token-Based Access Control
 -- =====================================================
 
@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS rooms (
   currency TEXT NOT NULL DEFAULT 'KES' CHECK (currency IN ('KES', 'USD', 'UGX', 'TZS')),
   
   -- Token-based access control
-  steward_token UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
-  viewer_token UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  organizer_token UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  contributor_token UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
   
   -- PIN security (bcrypt hash of 4-6 digit PIN)
   pin_hash TEXT NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS rooms (
   settings JSONB DEFAULT '{
     "allow_pledges": true,
     "allow_anonymous": false,
-    "show_amounts_to_viewers": true,
+    "show_amounts_to_contributors": true,
     "enable_milestones": true,
     "reminder_days_before": 3
   }'::jsonb,
@@ -47,8 +47,8 @@ CREATE TABLE IF NOT EXISTS rooms (
 );
 
 -- Indexes for performance
-CREATE INDEX idx_rooms_steward_token ON rooms(steward_token);
-CREATE INDEX idx_rooms_viewer_token ON rooms(viewer_token);
+CREATE INDEX idx_rooms_organizer_token ON rooms(organizer_token);
+CREATE INDEX idx_rooms_contributor_token ON rooms(contributor_token);
 CREATE INDEX idx_rooms_status ON rooms(status);
 CREATE INDEX idx_rooms_created_at ON rooms(created_at DESC);
 
@@ -62,12 +62,12 @@ CREATE TABLE IF NOT EXISTS contributions (
   
   -- Contributor details
   name TEXT NOT NULL CHECK (char_length(name) >= 2 AND char_length(name) <= 100),
-  phone_number TEXT, -- Optional, for future SMS integration
+  phone_number TEXT,
   
   -- Payment details
   amount NUMERIC(15, 2) NOT NULL CHECK (amount > 0),
   payment_method TEXT NOT NULL DEFAULT 'MPESA' CHECK (payment_method IN ('MPESA', 'CASH', 'BANK', 'AIRTEL', 'OTHER')),
-  transaction_ref TEXT, -- M-Pesa code, bank ref, etc.
+  transaction_ref TEXT,
   
   -- Status tracking
   status TEXT NOT NULL DEFAULT 'confirmed' CHECK (status IN ('confirmed', 'pledged', 'cancelled')),
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS room_activity_log (
   room_id UUID NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
   action TEXT NOT NULL CHECK (action IN ('room_created', 'contribution_added', 'contribution_updated', 'contribution_deleted', 'room_archived', 'settings_changed')),
   details JSONB,
-  actor_type TEXT NOT NULL CHECK (actor_type IN ('steward', 'system')),
+  actor_type TEXT NOT NULL CHECK (actor_type IN ('organizer', 'system')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -105,7 +105,6 @@ CREATE INDEX idx_activity_log_room_id ON room_activity_log(room_id, created_at D
 
 -- =====================================================
 -- TRIGGER: Auto-update room statistics
--- Keeps total_collected, contributor_count in sync
 -- =====================================================
 CREATE OR REPLACE FUNCTION update_room_statistics()
 RETURNS TRIGGER AS $$
@@ -177,51 +176,45 @@ BEFORE UPDATE ON contributions
 FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- =====================================================
--- RPC FUNCTION: Create Room (Public)
--- Returns both steward and viewer tokens
+-- RPC FUNCTION: Create Room
 -- =====================================================
 CREATE OR REPLACE FUNCTION create_room(
   p_title TEXT,
   p_description TEXT,
   p_target_amount NUMERIC,
   p_currency TEXT,
-  p_pin TEXT, -- Plain text PIN (will be hashed)
+  p_pin TEXT, 
   p_expires_in_days INTEGER DEFAULT 30,
   p_settings JSONB DEFAULT NULL
 )
 RETURNS JSON AS $$
 DECLARE
   v_room_id UUID;
-  v_steward_token UUID;
-  v_viewer_token UUID;
+  v_organizer_token UUID;
+  v_contributor_token UUID;
   v_pin_hash TEXT;
   v_expires_at TIMESTAMPTZ;
 BEGIN
-  -- Validate PIN (must be 4-6 digits)
   IF p_pin !~ '^\d{4,6}$' THEN
     RAISE EXCEPTION 'PIN must be 4-6 digits';
   END IF;
   
-  -- Hash the PIN
   v_pin_hash := crypt(p_pin, gen_salt('bf', 8));
   
-  -- Calculate expiration
   IF p_expires_in_days IS NOT NULL THEN
     v_expires_at := NOW() + (p_expires_in_days || ' days')::INTERVAL;
   END IF;
   
-  -- Generate tokens
-  v_steward_token := uuid_generate_v4();
-  v_viewer_token := uuid_generate_v4();
+  v_organizer_token := uuid_generate_v4();
+  v_contributor_token := uuid_generate_v4();
   
-  -- Insert room
   INSERT INTO rooms (
     title,
     description,
     target_amount,
     currency,
-    steward_token,
-    viewer_token,
+    organizer_token,
+    contributor_token,
     pin_hash,
     expires_at,
     settings
@@ -230,34 +223,31 @@ BEGIN
     p_description,
     p_target_amount,
     p_currency,
-    v_steward_token,
-    v_viewer_token,
+    v_organizer_token,
+    v_contributor_token,
     v_pin_hash,
     v_expires_at,
     COALESCE(p_settings, '{}'::jsonb)
   )
   RETURNING id INTO v_room_id;
   
-  -- Log activity
   INSERT INTO room_activity_log (room_id, action, actor_type, details)
-  VALUES (v_room_id, 'room_created', 'steward', json_build_object('title', p_title)::jsonb);
+  VALUES (v_room_id, 'room_created', 'organizer', json_build_object('title', p_title)::jsonb);
   
-  -- Return tokens (CRITICAL: Only show once)
   RETURN json_build_object(
     'room_id', v_room_id,
-    'steward_token', v_steward_token,
-    'viewer_token', v_viewer_token,
-    'steward_url', '/room/' || v_steward_token,
-    'viewer_url', '/room/' || v_viewer_token
+    'organizer_token', v_organizer_token,
+    'contributor_token', v_contributor_token,
+    'organizer_url', '/room/' || v_organizer_token,
+    'contributor_url', '/room/' || v_contributor_token
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
--- RPC FUNCTION: Validate Steward Access with PIN
--- Returns session-like validation
+-- RPC FUNCTION: Validate Organizer Access
 -- =====================================================
-CREATE OR REPLACE FUNCTION validate_steward_access(
+CREATE OR REPLACE FUNCTION validate_organizer_access(
   p_token UUID,
   p_pin TEXT
 )
@@ -266,34 +256,30 @@ DECLARE
   v_room RECORD;
   v_is_valid BOOLEAN;
 BEGIN
-  -- Find room by steward token
   SELECT * INTO v_room
   FROM rooms
-  WHERE steward_token = p_token;
+  WHERE organizer_token = p_token;
   
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'Invalid steward token';
+    RAISE EXCEPTION 'Invalid organizer token';
   END IF;
   
-  -- Verify PIN
   v_is_valid := (v_room.pin_hash = crypt(p_pin, v_room.pin_hash));
   
   IF NOT v_is_valid THEN
     RAISE EXCEPTION 'Invalid PIN';
   END IF;
   
-  -- Return room details with access granted
   RETURN json_build_object(
     'access_granted', true,
     'room_id', v_room.id,
-    'role', 'steward'
+    'role', 'organizer'
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
--- RPC FUNCTION: Get Room Details (Viewer or Steward)
--- Public read access via token
+-- RPC FUNCTION: Get Room Details
 -- =====================================================
 CREATE OR REPLACE FUNCTION get_room_details(
   p_token UUID
@@ -304,17 +290,16 @@ DECLARE
   v_role TEXT;
   v_contributions JSON;
 BEGIN
-  -- Check if token is steward or viewer
   SELECT 
     *,
     CASE 
-      WHEN steward_token = p_token THEN 'steward'
-      WHEN viewer_token = p_token THEN 'viewer'
+      WHEN organizer_token = p_token THEN 'organizer'
+      WHEN contributor_token = p_token THEN 'contributor'
       ELSE NULL
     END as access_role
   INTO v_room
   FROM rooms
-  WHERE steward_token = p_token OR viewer_token = p_token;
+  WHERE organizer_token = p_token OR contributor_token = p_token;
   
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Invalid room token';
@@ -322,18 +307,17 @@ BEGIN
   
   v_role := v_room.access_role;
   
-  -- Get contributions (respecting privacy settings)
   SELECT json_agg(
     json_build_object(
       'id', c.id,
       'name', CASE 
-        WHEN c.is_anonymous AND v_role = 'viewer' THEN 'Anonymous'
+        WHEN c.is_anonymous AND v_role = 'contributor' THEN 'Anonymous'
         ELSE c.name
       END,
       'amount', c.amount,
       'payment_method', c.payment_method,
       'transaction_ref', CASE
-        WHEN v_role = 'steward' THEN c.transaction_ref
+        WHEN v_role = 'organizer' THEN c.transaction_ref
         ELSE NULL
       END,
       'status', c.status,
@@ -346,7 +330,6 @@ BEGIN
   FROM contributions c
   WHERE c.room_id = v_room.id;
   
-  -- Return complete room data
   RETURN json_build_object(
     'room', json_build_object(
       'id', v_room.id,
@@ -365,16 +348,16 @@ BEGIN
     ),
     'contributions', COALESCE(v_contributions, '[]'::json),
     'role', v_role,
-    'can_edit', (v_role = 'steward' AND v_room.status = 'active')
+    'can_edit', (v_role = 'organizer' AND v_room.status = 'active')
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
--- RPC FUNCTION: Add Contribution (Steward Only)
+-- RPC FUNCTION: Add Contribution (Organizer Only)
 -- =====================================================
 CREATE OR REPLACE FUNCTION add_contribution(
-  p_steward_token UUID,
+  p_organizer_token UUID,
   p_name TEXT,
   p_amount NUMERIC,
   p_payment_method TEXT,
@@ -390,21 +373,18 @@ DECLARE
   v_contribution_id UUID;
   v_confirmed_at TIMESTAMPTZ;
 BEGIN
-  -- Validate steward token and get room_id
   SELECT id INTO v_room_id
   FROM rooms
-  WHERE steward_token = p_steward_token AND status = 'active';
+  WHERE organizer_token = p_organizer_token AND status = 'active';
   
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Unauthorized or room not active';
   END IF;
   
-  -- Set confirmed_at if status is confirmed
   IF p_status = 'confirmed' THEN
     v_confirmed_at := NOW();
   END IF;
   
-  -- Insert contribution
   INSERT INTO contributions (
     room_id,
     name,
@@ -430,9 +410,8 @@ BEGIN
   )
   RETURNING id INTO v_contribution_id;
   
-  -- Log activity
   INSERT INTO room_activity_log (room_id, action, actor_type, details)
-  VALUES (v_room_id, 'contribution_added', 'steward', json_build_object(
+  VALUES (v_room_id, 'contribution_added', 'organizer', json_build_object(
     'contribution_id', v_contribution_id,
     'name', p_name,
     'amount', p_amount
@@ -446,10 +425,10 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
--- RPC FUNCTION: Update Contribution (Steward Only)
+-- RPC FUNCTION: Update Contribution (Organizer Only)
 -- =====================================================
 CREATE OR REPLACE FUNCTION update_contribution(
-  p_steward_token UUID,
+  p_organizer_token UUID,
   p_contribution_id UUID,
   p_name TEXT DEFAULT NULL,
   p_amount NUMERIC DEFAULT NULL,
@@ -462,19 +441,17 @@ RETURNS JSON AS $$
 DECLARE
   v_room_id UUID;
 BEGIN
-  -- Validate steward token
   SELECT c.room_id INTO v_room_id
   FROM contributions c
   JOIN rooms r ON r.id = c.room_id
   WHERE c.id = p_contribution_id 
-    AND r.steward_token = p_steward_token 
+    AND r.organizer_token = p_organizer_token 
     AND r.status = 'active';
   
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Unauthorized or contribution not found';
   END IF;
   
-  -- Update contribution (only provided fields)
   UPDATE contributions
   SET
     name = COALESCE(p_name, name),
@@ -489,9 +466,8 @@ BEGIN
     END
   WHERE id = p_contribution_id;
   
-  -- Log activity
   INSERT INTO room_activity_log (room_id, action, actor_type, details)
-  VALUES (v_room_id, 'contribution_updated', 'steward', json_build_object(
+  VALUES (v_room_id, 'contribution_updated', 'organizer', json_build_object(
     'contribution_id', p_contribution_id
   )::jsonb);
   
@@ -500,34 +476,31 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
--- RPC FUNCTION: Delete Contribution (Steward Only)
+-- RPC FUNCTION: Delete Contribution (Organizer Only)
 -- =====================================================
 CREATE OR REPLACE FUNCTION delete_contribution(
-  p_steward_token UUID,
+  p_organizer_token UUID,
   p_contribution_id UUID
 )
 RETURNS JSON AS $$
 DECLARE
   v_room_id UUID;
 BEGIN
-  -- Validate steward token
   SELECT c.room_id INTO v_room_id
   FROM contributions c
   JOIN rooms r ON r.id = c.room_id
   WHERE c.id = p_contribution_id 
-    AND r.steward_token = p_steward_token 
+    AND r.organizer_token = p_organizer_token 
     AND r.status = 'active';
   
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Unauthorized or contribution not found';
   END IF;
   
-  -- Delete contribution
   DELETE FROM contributions WHERE id = p_contribution_id;
   
-  -- Log activity
   INSERT INTO room_activity_log (room_id, action, actor_type, details)
-  VALUES (v_room_id, 'contribution_deleted', 'steward', json_build_object(
+  VALUES (v_room_id, 'contribution_deleted', 'organizer', json_build_object(
     'contribution_id', p_contribution_id
   )::jsonb);
   
@@ -536,28 +509,26 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
--- RPC FUNCTION: Archive Room (Steward Only)
+-- RPC FUNCTION: Archive Room (Organizer Only)
 -- =====================================================
 CREATE OR REPLACE FUNCTION archive_room(
-  p_steward_token UUID
+  p_organizer_token UUID
 )
 RETURNS JSON AS $$
 DECLARE
   v_room_id UUID;
 BEGIN
-  -- Validate steward token and update status
   UPDATE rooms
   SET status = 'archived'
-  WHERE steward_token = p_steward_token AND status = 'active'
+  WHERE organizer_token = p_organizer_token AND status = 'active'
   RETURNING id INTO v_room_id;
   
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Unauthorized or room not found';
   END IF;
   
-  -- Log activity
   INSERT INTO room_activity_log (room_id, action, actor_type)
-  VALUES (v_room_id, 'room_archived', 'steward');
+  VALUES (v_room_id, 'room_archived', 'organizer');
   
   RETURN json_build_object('success', true);
 END;
@@ -574,16 +545,14 @@ DECLARE
   v_room_id UUID;
   v_stats JSON;
 BEGIN
-  -- Validate token
   SELECT id INTO v_room_id
   FROM rooms
-  WHERE steward_token = p_token OR viewer_token = p_token;
+  WHERE organizer_token = p_token OR contributor_token = p_token;
   
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Invalid token';
   END IF;
   
-  -- Calculate comprehensive statistics
   WITH daily_contributions AS (
     SELECT 
       DATE(confirmed_at) as date,
@@ -637,21 +606,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Grant execute permissions on RPC functions
 -- =====================================================
 GRANT EXECUTE ON FUNCTION create_room TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION validate_steward_access TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION validate_organizer_access TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION get_room_details TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION add_contribution TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION update_contribution TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION delete_contribution TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION archive_room TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION get_room_statistics TO anon, authenticated;
-
--- =====================================================
--- Success Message
--- =====================================================
-DO $$
-BEGIN
-  RAISE NOTICE '✅ THE LEDGER DATABASE INITIALIZED SUCCESSFULLY';
-  RAISE NOTICE '🔐 Token-based security layer active';
-  RAISE NOTICE '📊 RPC functions ready for use';
-  RAISE NOTICE '🚀 Ready to build the future of informal finance';
-END $$;

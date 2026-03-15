@@ -27,8 +27,8 @@ export const useRoom = (token: string | null) => {
         errorMessage: 'Failed to load room',
         onSuccess: (result) => {
           setRoom(result.data);
-          // Save to history if steward
-          if (result.data.role === 'steward') {
+          // Save to history if organizer
+          if (result.data.role === 'organizer') {
             LocalStorageService.touchRoom(result.data.room.id);
           }
         },
@@ -60,8 +60,8 @@ export const useRoom = (token: string | null) => {
     loading,
     error,
     refetch: fetchRoom,
-    isViewer: room?.role === 'viewer',
-    isSteward: room?.role === 'steward',
+    isContributor: room?.role === 'contributor',
+    isOrganizer: room?.role === 'organizer',
     canEdit: room?.can_edit || false,
   };
 };

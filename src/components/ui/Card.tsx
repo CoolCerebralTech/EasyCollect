@@ -27,11 +27,11 @@ export const Card: React.FC<CardProps> = ({
     lg: 'p-8',
   };
 
-  const hoverStyles = hover ? 'hover:shadow-lg transition-shadow duration-200' : '';
+  const hoverStyles = hover ? 'hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out' : '';
 
   return (
     <div 
-      className={`bg-white rounded-xl shadow-md ${paddingStyles[padding]} ${hoverStyles} ${className}`}
+      className={`bg-white dark:bg-background-card border border-border-DEFAULT dark:border-border-dark rounded-xl shadow-card ${paddingStyles[padding]} ${hoverStyles} ${className}`}
       {...props}
     >
       {children}

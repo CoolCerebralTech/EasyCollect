@@ -34,7 +34,7 @@ export const RoomViewPage: React.FC = () => {
   const navigate = useNavigate();
   
   // Custom hook usage
-  const { room, loading, error, refetch, isSteward, canEdit } = useRoom(token || null);
+  const { room, loading, error, refetch, isOrganizer, canEdit } = useRoom(token || null);
   const contributionsHook = useContributions(token || '');
   
   // Local state
@@ -88,8 +88,8 @@ export const RoomViewPage: React.FC = () => {
     );
   }
 
-  // --- PIN GATE (Steward Only) ---
-  if (isSteward && !isAuthenticated) {
+  // --- PIN GATE (Organizer Only) ---
+  if (isOrganizer && !isAuthenticated) {
     return <PINGate token={token!} onAuthenticated={() => setIsAuthenticated(true)} />;
   }
 

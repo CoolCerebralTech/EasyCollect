@@ -133,7 +133,7 @@ export const HomePage: React.FC = () => {
               </div>
               
               {/* Floating Badge on Mockup */}
-              <div className="absolute top-20 -left-12 bg-white p-3 rounded-lg shadow-xl border border-green-100 flex items-center gap-3 animate-bounce-slow">
+              <div className="absolute top-20 -left-12 bg-white p-3 rounded-lg shadow-xl border border-green-100 flex items-center gap-3 animate-bounce">
                 <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl">🚀</div>
                 <div>
                   <div className="text-xs text-slate-500">Share via</div>
@@ -162,7 +162,7 @@ export const HomePage: React.FC = () => {
                   key={room.roomId}
                   onClick={() => navigate(`/room/${room.stewardToken}`)}
                   className={`
-                    group relative bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:shadow-md hover:border-green-300 transition-all cursor-pointer
+                    group relative bg-white rounded-xl p-5 border border-slate-200 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer
                     ${deletingId === room.roomId ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
                   `}
                 >
@@ -202,6 +202,7 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
       )}
+
 
       {/* 3. HOW IT WORKS */}
       <div id="how-it-works" className="py-20 bg-white">

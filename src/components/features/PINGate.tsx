@@ -1,6 +1,6 @@
 // =====================================================
 // components/features/PINGate.tsx
-// PIN authentication gate for steward access
+// PIN authentication gate for organizer access
 // =====================================================
 
 import React, { useState, useEffect } from 'react';
@@ -69,7 +69,7 @@ export const PINGate: React.FC<PINGateProps> = ({ token, onAuthenticated }) => {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Steward Access
+            Organizer Access
           </h2>
           <p className="text-gray-600">
             Enter your 4-6 digit PIN to manage this room

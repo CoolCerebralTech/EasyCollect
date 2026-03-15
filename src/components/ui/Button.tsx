@@ -24,14 +24,14 @@ export const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variants = {
-    primary: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 active:bg-green-800',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500 active:bg-gray-400',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 active:bg-red-800',
-    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-    success: 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-400',
+    primary: 'bg-primary-DEFAULT text-primary-foreground hover:bg-primary-hover focus:ring-primary-DEFAULT',
+    secondary: 'bg-secondary-DEFAULT text-secondary-foreground hover:bg-secondary-hover focus:ring-secondary-DEFAULT',
+    danger: 'bg-danger-DEFAULT text-white hover:bg-danger-dark focus:ring-danger-DEFAULT',
+    ghost: 'bg-transparent text-text-subtle hover:bg-background-hover focus:ring-background-muted',
+    success: 'bg-success-DEFAULT text-white hover:bg-success-dark focus:ring-success-DEFAULT',
   };
 
   const sizes = {

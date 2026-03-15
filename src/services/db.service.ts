@@ -87,10 +87,10 @@ export class RoomService {
   }
 
   /**
-   * Validate steward access with PIN
+   * Validate organizer access with PIN
    * Must be called before allowing edit operations
    */
-  static async validateStewardAccess(
+  static async validateOrganizerAccess(
     token: string,
     pin: string
   ): Promise<ApiResponse<ValidateStewardAccessResponse>> {
@@ -100,7 +100,7 @@ export class RoomService {
         p_pin: pin,
       });
 
-      if (error) handleError(error, 'validateStewardAccess');
+      if (error) handleError(error, 'validateOrganizerAccess');
 
       return {
         success: true,
@@ -119,7 +119,7 @@ export class RoomService {
   }
 
   /**
-   * Get complete room details (works for both steward and viewer tokens)
+   * Get complete room details (works for both organizer and contributor tokens)
    * Returns different data based on role
    */
   static async getRoomDetails(token: string): Promise<ApiResponse<RoomDetails>> {
@@ -147,13 +147,13 @@ export class RoomService {
   }
 
   /**
-   * Archive a room (steward only)
+   * Archive a room (organizer only)
    * Makes the room read-only
    */
-  static async archiveRoom(stewardToken: string): Promise<ApiResponse<{ success: boolean }>> {
+  static async archiveRoom(organizerToken: string): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const { data, error } = await supabase.rpc('archive_room', {
-        p_steward_token: stewardToken,
+        p_steward_token: organizerToken,
       });
 
       if (error) handleError(error, 'archiveRoom');
@@ -208,10 +208,10 @@ export class RoomService {
 // =====================================================
 export class ContributionService {
   /**
-   * Add a new contribution (steward only)
+   * Add a new contribution (organizer only)
    */
   static async addContribution(
-    stewardToken: string,
+    organizerToken: string,
     contribution: AddContributionDTO
   ): Promise<ApiResponse<ContributionResponse>> {
     try {
@@ -232,7 +232,7 @@ export class ContributionService {
       }
 
       const { data, error } = await supabase.rpc('add_contribution', {
-        p_steward_token: stewardToken,
+        p_steward_token: organizerToken,
         p_name: contribution.name,
         p_amount: contribution.amount,
         p_payment_method: contribution.paymentMethod,
@@ -262,10 +262,10 @@ export class ContributionService {
   }
 
   /**
-   * Update an existing contribution (steward only)
+   * Update an existing contribution (organizer only)
    */
   static async updateContribution(
-    stewardToken: string,
+    organizerToken: string,
     update: UpdateContributionDTO
   ): Promise<ApiResponse<ContributionResponse>> {
     try {
@@ -278,7 +278,7 @@ export class ContributionService {
       }
 
       const { data, error } = await supabase.rpc('update_contribution', {
-        p_steward_token: stewardToken,
+        p_steward_token: organizerToken,
         p_contribution_id: update.contributionId,
         p_name: update.name || null,
         p_amount: update.amount || null,
@@ -307,15 +307,15 @@ export class ContributionService {
   }
 
   /**
-   * Delete a contribution (steward only)
+   * Delete a contribution (organizer only)
    */
   static async deleteContribution(
-    stewardToken: string,
+    organizerToken: string,
     contributionId: string
   ): Promise<ApiResponse<ContributionResponse>> {
     try {
       const { data, error } = await supabase.rpc('delete_contribution', {
-        p_steward_token: stewardToken,
+        p_steward_token: organizerToken,
         p_contribution_id: contributionId,
       });
 

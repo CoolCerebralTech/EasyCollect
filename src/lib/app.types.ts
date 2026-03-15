@@ -18,8 +18,8 @@ export type ActivityAction =
   | 'contribution_deleted' 
   | 'room_archived' 
   | 'settings_changed';
-export type ActorType = 'steward' | 'system';
-export type RoomRole = 'steward' | 'viewer';
+export type ActorType = 'organizer' | 'system';
+export type RoomRole = 'organizer' | 'contributor';
 
 // =====================================================
 // Room Settings Interface

@@ -146,7 +146,7 @@ _Note: Payments are still sent to the treasurer via M-Pesa as usual._`;
                 Your Ledger is Ready!
               </h2>
               <p className="text-slate-600">
-                You are the admin (Steward). These are your keys.
+                You are the organizer. These are your keys.
               </p>
             </div>
 
@@ -159,7 +159,7 @@ _Note: Payments are still sent to the treasurer via M-Pesa as usual._`;
                 <div className="p-3 bg-amber-100 rounded-lg text-2xl">👑</div>
                 <div>
                   <h3 className="font-bold text-amber-900 text-lg">
-                    Admin Link (Steward)
+                    Admin Link (Organizer)
                   </h3>
                   <p className="text-sm text-amber-800 opacity-90 leading-relaxed">
                     This link lets you add payments. <strong className="underline">Do not</strong> share this in the WhatsApp group.
