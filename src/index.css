@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Geometric sans-serif for a modern, tech-startup feel */
+:root {
+  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
 /* Hide scrollbar for horizontal tab strips while keeping scroll behavior */
 @utility no-scrollbar {
   -ms-overflow-style: none;
@@ -16,4 +25,23 @@
 }
 .animate-fadeIn {
   animation: fadeIn 0.22s ease-out;
+}
+
+/* Chaos bubble pop-in for hero WhatsApp animation */
+@keyframes bubblePop {
+  0% { opacity: 0; transform: scale(0.7) rotate(-2deg); }
+  60% { opacity: 1; transform: scale(1.05) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+.animate-bubblePop {
+  animation: bubblePop 0.4s ease-out backwards;
+}
+
+/* Notification slide-in for the pain section */
+@keyframes notifSlide {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-notifSlide {
+  animation: notifSlide 0.35s ease-out backwards;
 }

@@ -1,7 +1,9 @@
 // =====================================================
 // pages/HomePage.tsx
-// Landing page — for ANY group collecting money.
-// Not "chama software." For friends, trips, rent, gifts, events, everything.
+// Landing — thumb-stopping, modern, visual proof.
+// Overlapping WhatsApp chaos → clean dashboard reveal.
+// Bento use-case grid. iOS notification pain section.
+// Phone mockup how-it-works with paste visual.
 // =====================================================
 
 import React, { useState } from 'react';
@@ -13,33 +15,6 @@ import { DateService } from '../services/date.service';
 import { FormatUtils } from '../utils/format.utils';
 import type { Currency } from '../lib/types';
 
-const USE_CASES = [
-  { emoji: '🎂', label: 'Birthday gift' },
-  { emoji: '🚗', label: 'Road trip' },
-  { emoji: '🏠', label: 'House rent' },
-  { emoji: '🏖', label: 'Airbnb weekend' },
-  { emoji: '🎓', label: 'Graduation' },
-  { emoji: '⚽', label: 'Football tournament' },
-  { emoji: '🎮', label: 'Gaming event' },
-  { emoji: '💼', label: 'Office farewell' },
-  { emoji: '⛽', label: 'Fuel contribution' },
-  { emoji: '💍', label: 'Wedding gift' },
-  { emoji: '❤️', label: 'Funeral support' },
-  { emoji: '🎉', label: 'Party tickets' },
-  { emoji: '📚', label: 'Campus event' },
-  { emoji: '👨‍👩‍👧', label: 'Family fundraiser' },
-];
-
-const FAMILIAR_QUOTES = [
-  '"I already paid."',
-  '"Who\'s collecting?"',
-  '"Check above."',
-  '"How much do we have?"',
-  '"What\'s the till number?"',
-  '"I\'ll send later."',
-  '"Can you confirm mine?"',
-];
-
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { rooms, removeRoom } = useLocalStorage();
@@ -47,54 +22,53 @@ export const HomePage: React.FC = () => {
 
   const handleRemoveRoom = (roomId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (
-      window.confirm(
-        'Remove this group from your phone?\n\nOthers can still open it with the link.'
-      )
-    ) {
+    if (window.confirm('Remove this group from your phone?\n\nOthers can still open it with the link.')) {
       setDeletingId(roomId);
-      setTimeout(() => {
-        removeRoom(roomId);
-        setDeletingId(null);
-      }, 300);
+      setTimeout(() => { removeRoom(roomId); setDeletingId(null); }, 300);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans antialiased">
-      {/* ─────────────────────────────────────────────────
-          1. HERO — broad positioning, not chama-only
-      ───────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-slate-200 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F8FAFC] font-sans antialiased text-slate-900">
+      {/* ═══════════════════════════════════════════════════
+          1. HERO — overlapping WhatsApp chaos → clean dashboard
+      ═══════════════════════════════════════════════════ */}
+      <div className="relative overflow-hidden bg-white border-b border-slate-100">
+        {/* Soft gradient mesh */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute -top-32 -right-24 w-[34rem] h-[34rem] bg-gradient-to-br from-emerald-100 via-teal-50 to-transparent rounded-full blur-3xl opacity-70" />
-          <div className="absolute top-40 -left-32 w-[28rem] h-[28rem] bg-gradient-to-tr from-lime-100 via-emerald-50 to-transparent rounded-full blur-3xl opacity-60" />
+          <div className="absolute -top-40 -right-32 w-[40rem] h-[40rem] bg-gradient-to-br from-emerald-100 via-teal-50 to-transparent rounded-full blur-3xl opacity-80" />
+          <div className="absolute top-60 -left-40 w-[32rem] h-[32rem] bg-gradient-to-tr from-lime-100 via-emerald-50 to-transparent rounded-full blur-3xl opacity-60" />
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 pt-12 pb-16 sm:pt-16 sm:pb-20 relative">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left: broad pain → shortcut */}
+        <div className="max-w-6xl mx-auto px-4 pt-10 pb-16 sm:pt-14 sm:pb-20 relative">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+            {/* Left: headline + CTA */}
             <div className="text-left z-10">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-xs sm:text-sm font-semibold mb-5">
                 <span aria-hidden>🇰🇪</span>
                 <span>For any group collecting money</span>
               </div>
 
-              <h1 className="text-[2rem] sm:text-5xl lg:text-[3.5rem] font-extrabold text-slate-900 tracking-tight mb-4 sm:mb-5 leading-[1.08]">
+              <h1 className="text-[2.1rem] leading-[1.1] sm:text-5xl lg:text-[3.6rem] font-extrabold tracking-tight mb-4 sm:mb-6">
                 Collect money without the{' '}
-                <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-                  WhatsApp chaos
+                <span className="relative inline-block">
+                  <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+                    WhatsApp chaos
+                  </span>
+                  {/* Hand-drawn underline accent */}
+                  <svg className="absolute -bottom-1 left-0 w-full" height="8" viewBox="0 0 200 8" preserveAspectRatio="none" aria-hidden>
+                    <path d="M2 5 Q 50 1 100 5 T 198 3" stroke="#10b981" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.5" />
+                  </svg>
                 </span>
                 .
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-8 leading-relaxed max-w-lg">
-                Birthdays, trips, rent, events, gifts, welfare, chamas — if people are
-                paying one person, everyone deserves one shared payment list.
+              <p className="text-base sm:text-lg text-slate-600 mb-5 sm:mb-6 leading-relaxed max-w-lg">
+                Birthdays, trips, rent, events, gifts, welfare, chamas — if people are paying
+                one person, everyone deserves one shared payment list.
               </p>
 
-              {/* The one-liner that includes every use case */}
-              <p className="text-sm sm:text-base font-semibold text-slate-900 mb-6 sm:mb-7 max-w-lg">
+              <p className="text-sm sm:text-base font-bold text-slate-900 mb-6 sm:mb-8 max-w-lg">
                 If one person is collecting money, this is for you.
               </p>
 
@@ -107,11 +81,7 @@ export const HomePage: React.FC = () => {
                   Get My Group Link →
                 </Button>
                 <button
-                  onClick={() =>
-                    document
-                      .getElementById('collecting-for')
-                      ?.scrollIntoView({ behavior: 'smooth' })
-                  }
+                  onClick={() => document.getElementById('collecting-for')?.scrollIntoView({ behavior: 'smooth' })}
                   className="px-7 sm:px-8 py-6 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 transition-colors text-base sm:text-lg"
                 >
                   See use cases ↓
@@ -119,58 +89,64 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right: WhatsApp → Shared list transformation (trip-themed) */}
-            <div className="relative z-10">
-              {/* WhatsApp "before" card */}
-              <div className="bg-[#075E54] rounded-2xl p-4 sm:p-5 shadow-xl mb-4 max-w-sm mx-auto lg:ml-auto lg:mr-0">
-                <div className="text-white/90 text-xs font-semibold mb-3 px-1">
-                  Weekend Trip · 11:47 PM
+            {/* Right: overlapping WhatsApp chaos bubbles → clean dashboard */}
+            <div className="relative z-10 h-[420px] sm:h-[480px] lg:h-[500px]">
+              {/* Chaos bubbles — overlapping, slightly rotated, popping in */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                <div className="animate-bubblePop" style={{ animationDelay: '0s' }}>
+                  <div className="bg-white rounded-2xl rounded-tl-sm shadow-lg px-4 py-2.5 text-sm text-slate-800 max-w-[80%] border border-slate-100 -rotate-2">
+                    <span className="font-semibold text-emerald-700">Kevin:</span> Nililipa jana 📱
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 text-sm text-slate-800 max-w-[85%]">
-                    <span className="font-semibold text-emerald-700">Kevin:</span> Nililipa jana.
+                <div className="animate-bubblePop ml-12 sm:ml-20" style={{ animationDelay: '0.15s' }}>
+                  <div className="bg-white rounded-2xl rounded-tr-sm shadow-lg px-4 py-2.5 text-sm text-slate-800 max-w-[80%] border border-slate-100 rotate-1">
+                    <span className="font-semibold text-emerald-700">Brian:</span> Check hapo juu 👆
                   </div>
-                  <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 text-sm text-slate-800 max-w-[85%] ml-auto">
-                    <span className="font-semibold text-emerald-700">Brian:</span> Check hapo juu.
+                </div>
+                <div className="animate-bubblePop -mr-8 sm:-mr-4" style={{ animationDelay: '0.3s' }}>
+                  <div className="bg-white rounded-2xl rounded-tl-sm shadow-lg px-4 py-2.5 text-sm text-slate-800 max-w-[80%] border border-slate-100 -rotate-1">
+                    <span className="font-semibold text-emerald-700">Aisha:</span> Ni nani hajalipa? 🤔
                   </div>
-                  <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 text-sm text-slate-800 max-w-[85%]">
-                    <span className="font-semibold text-emerald-700">Aisha:</span> Ni nani hajalipa?
+                </div>
+                <div className="animate-bubblePop ml-16 sm:ml-24" style={{ animationDelay: '0.45s' }}>
+                  <div className="bg-white rounded-2xl rounded-tr-sm shadow-lg px-4 py-2.5 text-sm text-slate-800 max-w-[80%] border border-slate-100 rotate-2">
+                    <span className="font-semibold text-emerald-700">Joy:</span> What's the till number? 📲
                   </div>
-                  <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 text-sm text-slate-800 max-w-[85%] ml-auto">
+                </div>
+                <div className="animate-bubblePop" style={{ animationDelay: '0.6s' }}>
+                  <div className="bg-white rounded-2xl rounded-tl-sm shadow-lg px-4 py-3 text-base text-slate-800 max-w-[80%] border border-slate-100 -rotate-2">
                     <span className="font-semibold text-emerald-700">Organizer:</span> 😩
                   </div>
                 </div>
-              </div>
 
-              {/* Arrow */}
-              <div className="flex justify-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-emerald-600 text-xl font-bold animate-bounce">
-                  ↓
+                {/* Arrow */}
+                <div className="animate-bubblePop mt-1" style={{ animationDelay: '0.8s' }}>
+                  <div className="w-9 h-9 rounded-full bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-emerald-600 text-lg font-bold">
+                    ↓
+                  </div>
                 </div>
               </div>
 
-              {/* Shared list "after" card — trip themed */}
-              <div className="bg-white rounded-2xl shadow-xl max-w-sm mx-auto lg:ml-auto lg:mr-0 overflow-hidden">
-                <div className="bg-gradient-to-br from-emerald-600 to-teal-600 px-5 py-4 text-white">
-                  <div className="text-xs opacity-80">Weekend Trip</div>
-                  <div className="font-bold text-lg">Total: KES 18,500</div>
-                </div>
-                <div className="p-4 space-y-2.5">
-                  <div className="flex justify-between items-center py-2 px-3 bg-emerald-50 rounded-lg">
-                    <span className="text-sm font-medium text-slate-800">✓ Kevin</span>
-                    <span className="text-sm font-bold text-emerald-600">KES 1,500</span>
+              {/* Clean dashboard card — revealed below */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xs animate-bubblePop" style={{ animationDelay: '1s' }}>
+                <div className="bg-white rounded-2xl shadow-2xl shadow-emerald-900/10 overflow-hidden border border-slate-100">
+                  <div className="bg-gradient-to-br from-emerald-600 to-teal-600 px-5 py-3.5 text-white">
+                    <div className="text-xs opacity-80">Weekend Trip</div>
+                    <div className="font-bold text-lg">Total: KES 18,500</div>
                   </div>
-                  <div className="flex justify-between items-center py-2 px-3 bg-emerald-50 rounded-lg">
-                    <span className="text-sm font-medium text-slate-800">✓ Brian</span>
-                    <span className="text-sm font-bold text-emerald-600">KES 3,000</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 px-3 bg-emerald-50 rounded-lg">
-                    <span className="text-sm font-medium text-slate-800">✓ Aisha</span>
-                    <span className="text-sm font-bold text-emerald-600">KES 2,000</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 px-3 bg-slate-50 rounded-lg opacity-70">
-                    <span className="text-sm font-medium text-slate-500">○ Joy</span>
-                    <span className="text-sm font-bold text-slate-400">Pending</span>
+                  <div className="p-3 space-y-2">
+                    <div className="flex justify-between items-center py-1.5 px-3 bg-emerald-50 rounded-lg">
+                      <span className="text-sm font-medium text-slate-800">✓ Kevin</span>
+                      <span className="text-sm font-bold text-emerald-600">KES 1,500</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 px-3 bg-emerald-50 rounded-lg">
+                      <span className="text-sm font-medium text-slate-800">✓ Brian</span>
+                      <span className="text-sm font-bold text-emerald-600">KES 3,000</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 px-3 bg-slate-50 rounded-lg opacity-70">
+                      <span className="text-sm font-medium text-slate-500">○ Joy</span>
+                      <span className="text-sm font-bold text-slate-400">Pending</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -179,135 +155,273 @@ export const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* ─────────────────────────────────────────────────
-          2. "COLLECTING FOR..." — use-case grid (modern cards)
-      ───────────────────────────────────────────────── */}
-      <div id="collecting-for" className="bg-slate-50 py-16 sm:py-20 border-b border-slate-200">
+      {/* ═══════════════════════════════════════════════════
+          2. BENTO GRID — 6 large use-case cards
+      ═══════════════════════════════════════════════════ */}
+      <div id="collecting-for" className="py-16 sm:py-20 bg-[#F8FAFC]">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-10 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-3">
               Collecting money for...?
             </h2>
             <p className="text-slate-500 text-sm sm:text-base">
               If one person is collecting, there's a link for that.
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {USE_CASES.map((uc, i) => (
-              <div
-                key={i}
-                className="group bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 transition-all duration-200 cursor-default"
-              >
-                <div className="text-3xl sm:text-4xl mb-2 group-hover:scale-110 transition-transform duration-200">
-                  {uc.emoji}
-                </div>
-                <div className="text-sm sm:text-base font-semibold text-slate-700">
-                  {uc.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {/* ─────────────────────────────────────────────────
-          3. "EVERY GROUP" — emotional mirror (broader)
-      ───────────────────────────────────────────────── */}
-      <div className="bg-white py-16 sm:py-20 border-b border-slate-200">
-        <div className="max-w-2xl mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-3">
-            Every group has one person saying...
-          </h2>
-          <p className="text-center text-slate-500 mb-10 text-sm sm:text-base">
-            You've been in this chat. We all have.
-          </p>
-          <div className="space-y-3 sm:space-y-4 mb-10">
-            {FAMILIAR_QUOTES.map((quote, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 sm:gap-4 bg-slate-50 rounded-xl px-4 sm:px-5 py-3.5 border border-slate-100"
-              >
-                <span className="text-lg sm:text-xl text-slate-400 flex-shrink-0">💬</span>
-                <span className="text-base sm:text-lg text-slate-700 font-medium italic">
-                  {quote}
-                </span>
+          {/* Bento grid: asymmetric, modern */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 auto-rows-[120px] sm:auto-rows-[150px]">
+            {/* Large feature card — Road Trip */}
+            <div className="col-span-2 row-span-2 group bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-lg shadow-emerald-200/40 hover:shadow-xl hover:shadow-emerald-300/40 hover:-translate-y-1 transition-all duration-300 cursor-default">
+              <div className="text-5xl sm:text-6xl group-hover:scale-110 transition-transform duration-300">🚗</div>
+              <div>
+                <div className="text-xl sm:text-2xl font-bold text-white">Road trips</div>
+                <div className="text-sm text-emerald-50/80 mt-1">Fuel, Airbnb, food — one link for everyone</div>
               </div>
-            ))}
-            <div className="flex items-center gap-3 sm:gap-4 bg-slate-50 rounded-xl px-4 sm:px-5 py-3.5 border border-slate-100">
-              <span className="text-lg sm:text-xl text-slate-400 flex-shrink-0">😩</span>
-              <span className="text-base sm:text-lg text-slate-700 font-medium">
-                &mdash; the organizer
-              </span>
+            </div>
+
+            {/* Birthday — tall */}
+            <div className="row-span-2 group bg-white rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default">
+              <div className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-300">🎂</div>
+              <div>
+                <div className="text-base sm:text-lg font-bold text-slate-900">Birthday gifts</div>
+                <div className="text-xs text-slate-400 mt-0.5">Chip in for the surprise</div>
+              </div>
+            </div>
+
+            {/* Rent */}
+            <div className="group bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default">
+              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-300">🏠</div>
+              <div className="text-sm sm:text-base font-bold text-slate-900 mt-2">House rent</div>
+            </div>
+
+            {/* Graduation */}
+            <div className="group bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default">
+              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-300">🎓</div>
+              <div className="text-sm sm:text-base font-bold text-slate-900 mt-2">Graduation</div>
+            </div>
+
+            {/* Weddings — wide */}
+            <div className="col-span-2 group bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-5 sm:p-6 shadow-sm hover:shadow-md hover:-translate-y-1 border border-amber-100 transition-all duration-300 cursor-default">
+              <div className="flex items-center gap-4">
+                <div className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-300">💍</div>
+                <div>
+                  <div className="text-base sm:text-lg font-bold text-slate-900">Weddings & Fundraisers</div>
+                  <div className="text-xs text-slate-500 mt-0.5">Harambees, welfare, family support</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Office farewell */}
+            <div className="group bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default">
+              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-300">💼</div>
+              <div className="text-sm sm:text-base font-bold text-slate-900 mt-2">Office gifts</div>
             </div>
           </div>
-          <p className="text-center text-xl sm:text-2xl font-bold text-slate-900">
-            Every group eventually becomes a payment group.
+
+          {/* Subtle "and more" */}
+          <p className="text-center text-slate-400 text-sm mt-6 sm:mt-8">
+            ...and football pools, gaming tournaments, campus events, party tickets, and everything else.
           </p>
         </div>
       </div>
 
-      {/* ─────────────────────────────────────────────────
-          4. HOW IT WORKS — paste-don't-type is the star
-      ───────────────────────────────────────────────── */}
-      <div id="how-it-works" className="py-16 sm:py-20 bg-slate-50">
-        <div className="max-w-4xl mx-auto px-4">
+      {/* ═══════════════════════════════════════════════════
+          3. PAIN SECTION — iOS notification stack (stressful)
+      ═══════════════════════════════════════════════════ */}
+      <div className="bg-white py-16 sm:py-24 border-y border-slate-100 relative overflow-hidden">
+        <div className="max-w-2xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight">
+            Every group has one person saying...
+          </h2>
+          <p className="text-center text-slate-500 mb-10 sm:mb-12 text-sm sm:text-base">
+            You've been in this chat. We all have.
+          </p>
+
+          {/* iOS-style notification stack — overlapping, slightly askew */}
+          <div className="relative space-y-1 mb-12 sm:mb-16 max-w-sm mx-auto">
+            {[
+              { name: 'Kevin', msg: "I already paid.", time: '11:32 PM' },
+              { name: 'Brian', msg: "Who's collecting?", time: '11:35 PM' },
+              { name: 'Aisha', msg: "Check above ↑", time: '11:36 PM' },
+              { name: 'Joy', msg: "What's the till number?", time: '11:38 PM' },
+              { name: 'Kevin', msg: "I'll send later", time: '11:40 PM' },
+              { name: 'Brian', msg: "Can you confirm mine?", time: '11:42 PM' },
+            ].map((n, i) => (
+              <div
+                key={i}
+                className={`animate-notifSlide relative bg-white/95 backdrop-blur rounded-2xl shadow-md border border-slate-100 px-4 py-3 flex items-start gap-3 ${i % 2 === 0 ? 'rotate-[-0.8deg]' : 'rotate-[0.6deg]'} ${i > 0 ? '-mt-2' : ''}`}
+                style={{ animationDelay: `${i * 0.12}s`, zIndex: 10 - i }}
+              >
+                {/* Avatar */}
+                <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-sm font-bold text-emerald-700 flex-shrink-0">
+                  {n.name[0]}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-xs font-bold text-slate-900">{n.name}</span>
+                    <span className="text-[10px] text-slate-400">{n.time}</span>
+                  </div>
+                  <p className="text-sm text-slate-600 truncate">{n.msg}</p>
+                </div>
+                {/* Fake "WhatsApp" label */}
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <div className="w-5 h-5 rounded bg-[#25D366] flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4C8.7 21.5 10.3 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Resolution */}
+          <div className="text-center">
+            <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
+              Every group eventually becomes a payment group.
+            </p>
+            <p className="text-base sm:text-lg text-emerald-600 font-semibold">
+              Bring order to the chaos.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════
+          4. HOW IT WORKS — phone mockup + paste visual
+      ═══════════════════════════════════════════════════ */}
+      <div id="how-it-works" className="py-16 sm:py-24 bg-gradient-to-b from-[#F8FAFC] to-emerald-50/40">
+        <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
-              It takes less than a minute
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-3">
+              Less than a minute. Zero typing.
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
               No app download. No sign-up for your members.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8 relative">
-            <div className="hidden md:block absolute top-10 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-emerald-200 via-emerald-300 to-emerald-200 z-0" />
-
-            <div className="relative z-10 text-center">
-              <div className="w-20 h-20 bg-white border-4 border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
-                <span className="text-3xl">💸</span>
+          {/* Three phone mockups */}
+          <div className="grid md:grid-cols-3 gap-8 sm:gap-6">
+            {/* Phone 1: M-Pesa SMS */}
+            <div className="flex flex-col items-center">
+              <div className="relative w-[200px] h-[380px] rounded-[2.2rem] bg-slate-900 border-[10px] border-slate-900 shadow-2xl shadow-slate-300 overflow-hidden">
+                <div className="rounded-[1.5rem] overflow-hidden h-full bg-slate-50 flex flex-col">
+                  {/* SMS header */}
+                  <div className="bg-slate-100 px-4 py-3 flex items-center gap-2 border-b border-slate-200">
+                    <div className="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">M</div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900">M-PESA</div>
+                      <div className="text-[10px] text-slate-400">Safaricom</div>
+                    </div>
+                  </div>
+                  {/* SMS body */}
+                  <div className="p-4 flex-1 flex flex-col justify-center">
+                    <div className="bg-white rounded-2xl rounded-tl-sm p-3 shadow-sm border border-slate-100 max-w-[90%]">
+                      <div className="text-[11px] text-slate-500 mb-1">Confirmed. KES1,500.00 sent to 0712 345 678 — Mary Wanjiku on 18/7/26 at 2:45 PM. New M-PESA balance KES3,200.</div>
+                      <div className="text-[10px] text-slate-400 mt-2 border-t border-slate-100 pt-1">Copy SMS</div>
+                    </div>
+                  </div>
+                  {/* Home indicator */}
+                  <div className="flex justify-center pb-2"><div className="w-16 h-1 rounded-full bg-slate-300"></div></div>
+                </div>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2">
-                1. Collect as usual
-              </h3>
-              <p className="text-sm text-slate-500 px-2 sm:px-4">
-                People send to your M-Pesa or Airtel Money. Nothing changes for them.
-              </p>
+              <div className="mt-5 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold mb-2">STEP 1</div>
+                <h3 className="text-base font-bold text-slate-900">Copy the M-Pesa SMS</h3>
+                <p className="text-sm text-slate-500 mt-1 max-w-[180px]">Just like you always do.</p>
+              </div>
             </div>
 
-            <div className="relative z-10 text-center">
-              <div className="w-20 h-20 bg-white border-4 border-emerald-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg ring-4 ring-emerald-100/50">
-                <span className="text-3xl">📋</span>
+            {/* Phone 2: Paste into EasyCollect */}
+            <div className="flex flex-col items-center">
+              <div className="relative w-[200px] h-[380px] rounded-[2.2rem] bg-slate-900 border-[10px] border-slate-900 shadow-2xl shadow-emerald-200/40 overflow-hidden">
+                <div className="rounded-[1.5rem] overflow-hidden h-full bg-white flex flex-col">
+                  {/* App header */}
+                  <div className="bg-gradient-to-br from-emerald-600 to-teal-600 px-4 py-3 text-white">
+                    <div className="text-[10px] opacity-80">Weekend Trip</div>
+                    <div className="text-sm font-bold">Add Payment</div>
+                  </div>
+                  {/* Paste box */}
+                  <div className="p-4 flex-1 flex flex-col justify-center gap-3">
+                    <div className="bg-slate-50 rounded-xl p-3 border-2 border-dashed border-emerald-300">
+                      <div className="text-[10px] text-slate-400 mb-1">Paste M-Pesa SMS here</div>
+                      <div className="text-[10px] text-slate-600 font-mono leading-relaxed">Confirmed. KES1,500.00 sent to...</div>
+                    </div>
+                    {/* Auto-filled */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center px-3 py-2 bg-emerald-50 rounded-lg">
+                        <span className="text-[10px] text-slate-500">Name</span>
+                        <span className="text-xs font-bold text-slate-900">Mary Wanjiku</span>
+                      </div>
+                      <div className="flex justify-between items-center px-3 py-2 bg-emerald-50 rounded-lg">
+                        <span className="text-[10px] text-slate-500">Amount</span>
+                        <span className="text-xs font-bold text-emerald-600">KES 1,500</span>
+                      </div>
+                      <div className="flex justify-between items-center px-3 py-2 bg-emerald-50 rounded-lg">
+                        <span className="text-[10px] font-bold text-slate-500">+ Mary</span>
+                        <span className="text-xs text-emerald-600 font-bold">✓ Added</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-center pb-2"><div className="w-16 h-1 rounded-full bg-slate-300"></div></div>
+                </div>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2">
-                2. Don't type — paste
-              </h3>
-              <p className="text-sm text-slate-500 px-2 sm:px-4">
-                Copy the M-Pesa SMS, paste it here. We pull out the name, amount, and
-                transaction code automatically.
-              </p>
+              <div className="mt-5 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold mb-2 ring-2 ring-emerald-200">STEP 2 — the magic</div>
+                <h3 className="text-base font-bold text-slate-900">Don't type — paste</h3>
+                <p className="text-sm text-slate-500 mt-1 max-w-[180px]">We extract name, amount, and code automatically.</p>
+              </div>
             </div>
 
-            <div className="relative z-10 text-center">
-              <div className="w-20 h-20 bg-white border-4 border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
-                <span className="text-3xl">🔗</span>
+            {/* Phone 3: Shared list */}
+            <div className="flex flex-col items-center">
+              <div className="relative w-[200px] h-[380px] rounded-[2.2rem] bg-slate-900 border-[10px] border-slate-900 shadow-2xl shadow-emerald-200/40 overflow-hidden">
+                <div className="rounded-[1.5rem] overflow-hidden h-full bg-slate-50 flex flex-col">
+                  <div className="bg-gradient-to-br from-emerald-600 to-teal-600 px-4 py-3 text-white">
+                    <div className="text-[10px] opacity-80">Weekend Trip</div>
+                    <div className="text-sm font-bold">Total: KES 18,500</div>
+                    <div className="w-full bg-black/20 h-1 rounded-full mt-1 overflow-hidden">
+                      <div className="bg-white h-full w-[80%] rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="p-3 space-y-2 flex-1">
+                    <div className="flex justify-between items-center py-1.5 px-3 bg-white rounded-lg shadow-sm border-l-3 border-emerald-500">
+                      <span className="text-xs font-semibold text-slate-800">✓ Kevin</span>
+                      <span className="text-xs font-bold text-emerald-600">KES 1,500</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 px-3 bg-white rounded-lg shadow-sm border-l-3 border-emerald-500">
+                      <span className="text-xs font-semibold text-slate-800">✓ Brian</span>
+                      <span className="text-xs font-bold text-emerald-600">KES 3,000</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 px-3 bg-white rounded-lg shadow-sm border-l-3 border-emerald-500">
+                      <span className="text-xs font-semibold text-slate-800">✓ Mary</span>
+                      <span className="text-xs font-bold text-emerald-600">KES 1,500</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 px-3 bg-white rounded-lg shadow-sm border-l-3 border-slate-200 opacity-60">
+                      <span className="text-xs font-semibold text-slate-500">○ Joy</span>
+                      <span className="text-xs font-bold text-slate-400">Pending</span>
+                    </div>
+                  </div>
+                  <div className="px-4 pb-4">
+                    <div className="bg-emerald-600 text-white text-xs font-bold text-center py-2 rounded-xl">Share Link 📤</div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2">
-                3. Send the link
-              </h3>
-              <p className="text-sm text-slate-500 px-2 sm:px-4">
-                Share to the group chat. Everyone sees the updated list — no more DMs.
-              </p>
+              <div className="mt-5 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold mb-2">STEP 3</div>
+                <h3 className="text-base font-bold text-slate-900">Send the link</h3>
+                <p className="text-sm text-slate-500 mt-1 max-w-[180px]">Everyone sees the same list — no more DMs.</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ─────────────────────────────────────────────────
+      {/* ═══════════════════════════════════════════════════
           5. HISTORY (only if user has saved rooms)
-      ───────────────────────────────────────────────── */}
+      ═══════════════════════════════════════════════════ */}
       {rooms.length > 0 && (
-        <div className="bg-white py-10 sm:py-12 border-b border-slate-200">
+        <div className="bg-white py-10 sm:py-12 border-b border-slate-100">
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex items-center justify-between mb-5 sm:mb-6">
               <h2 className="text-lg sm:text-xl font-bold text-slate-800">Your groups</h2>
@@ -321,7 +435,7 @@ export const HomePage: React.FC = () => {
                   key={room.roomId}
                   onClick={() => navigate(`/room/${room.organizerToken}`)}
                   className={`
-                    group relative bg-white rounded-xl p-5 border border-slate-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer
+                    group relative bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer
                     ${deletingId === room.roomId ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
                   `}
                 >
@@ -347,25 +461,14 @@ export const HomePage: React.FC = () => {
                   </p>
                   <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">
-                        Target
-                      </p>
+                      <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Target</p>
                       <p className="font-mono font-medium text-slate-700">
-                        {room.targetAmount
-                          ? FormatUtils.formatCurrency(
-                              room.targetAmount,
-                              (room.currency as Currency) || 'KES'
-                            )
-                          : 'No limit'}
+                        {room.targetAmount ? FormatUtils.formatCurrency(room.targetAmount, (room.currency as Currency) || 'KES') : 'No limit'}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">
-                        Last opened
-                      </p>
-                      <p className="text-xs text-slate-600">
-                        {DateService.formatDate(room.lastAccessed, 'relative')}
-                      </p>
+                      <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Last opened</p>
+                      <p className="text-xs text-slate-600">{DateService.formatDate(room.lastAccessed, 'relative')}</p>
                     </div>
                   </div>
                 </div>
@@ -375,16 +478,16 @@ export const HomePage: React.FC = () => {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────────
-          6. FINAL CTA — coordination, not "treasurer"
-      ───────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-700 py-16 sm:py-20 text-center px-4 relative overflow-hidden">
+      {/* ═══════════════════════════════════════════════════
+          6. FINAL CTA
+      ═══════════════════════════════════════════════════ */}
+      <div className="bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-700 py-16 sm:py-24 text-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none" aria-hidden>
           <div className="absolute -top-20 left-1/4 w-72 h-72 bg-white rounded-full blur-3xl" />
           <div className="absolute -bottom-20 right-1/4 w-72 h-72 bg-lime-200 rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-2xl mx-auto">
-          <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4 sm:mb-5 tracking-tight">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-4 sm:mb-5 tracking-tight">
             Spend less time tracking payments.
           </h2>
           <p className="text-emerald-50 text-base sm:text-lg mb-8 max-w-xl mx-auto">
@@ -404,29 +507,19 @@ export const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* ─────────────────────────────────────────────────
+      {/* ═══════════════════════════════════════════════════
           FOOTER
-      ───────────────────────────────────────────────── */}
-      <footer className="bg-white py-10 border-t border-slate-200">
+      ═══════════════════════════════════════════════════ */}
+      <footer className="bg-white py-10 border-t border-slate-100">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
-            <div className="font-bold text-slate-900 text-lg mb-0.5">
-              EasyCollect 💚
-            </div>
-            <p className="text-sm text-slate-500">
-              The easiest way to track group contributions.
-            </p>
+            <div className="font-bold text-slate-900 text-lg mb-0.5">EasyCollect 💚</div>
+            <p className="text-sm text-slate-500">The easiest way to track group contributions.</p>
           </div>
           <div className="flex gap-5 text-sm text-slate-500">
-            <a href="#" className="hover:text-emerald-600 transition-colors">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-emerald-600 transition-colors">
-              Terms
-            </a>
-            <a href="#" className="hover:text-emerald-600 transition-colors">
-              Contact
-            </a>
+            <a href="#" className="hover:text-emerald-600 transition-colors">Privacy</a>
+            <a href="#" className="hover:text-emerald-600 transition-colors">Terms</a>
+            <a href="#" className="hover:text-emerald-600 transition-colors">Contact</a>
           </div>
         </div>
       </footer>
