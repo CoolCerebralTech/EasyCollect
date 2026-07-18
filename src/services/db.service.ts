@@ -349,8 +349,9 @@ export class RoomService {
    * Returns tokens that should be stored securely (shown only once)
    */
   static async createRoom(data: CreateRoomDTO): Promise<ApiResponse<CreateRoomResponse>> {
-    // On-device mode: no Supabase configured → persist to localStorage only.
-    if (!isSupabaseConfigured) return localDb.createRoom(data);
+    // On-device mode: no Supabase configured (or the configured project is
+    // paused / unreachable) → persist to localStorage only.
+    if (!isSupabaseConfigured()) return localDb.createRoom(data);
     try {
       // Validate PIN format
       if (!/^\d{4,6}$/.test(data.pin)) {
@@ -385,6 +386,10 @@ export class RoomService {
         data: result as CreateRoomResponse,
       };
     } catch (error) {
+      // Safety net: if Supabase looked reachable at first but the actual RPC
+      // throws (paused project, CORS reset, network down), fall back to
+      // on-device mode so the demo keeps working.
+      if (!isSupabaseConfigured()) return localDb.createRoom(data);
       return {
         success: false,
         error: {
@@ -404,7 +409,7 @@ export class RoomService {
     token: string,
     pin: string
   ): Promise<ApiResponse<ValidateOrganizerAccessResponse>> {
-    if (!isSupabaseConfigured) return localDb.validateOrganizerAccess(token, pin);
+    if (!isSupabaseConfigured()) return localDb.validateOrganizerAccess(token, pin);
     try {
       const { data, error } = await supabase!.rpc('validate_organizer_access', {
         p_token: token,
@@ -434,7 +439,7 @@ export class RoomService {
    * Returns different data based on role
    */
   static async getRoomDetails(token: string): Promise<ApiResponse<RoomDetails>> {
-    if (!isSupabaseConfigured) return localDb.getRoomDetails(token);
+    if (!isSupabaseConfigured()) return localDb.getRoomDetails(token);
     try {
       const { data, error } = await supabase!.rpc('get_room_details', {
         p_token: token,
@@ -491,7 +496,7 @@ export class RoomService {
    * Includes trends, payment breakdown, averages, etc.
    */
   static async getRoomStatistics(token: string): Promise<ApiResponse<RoomStatistics>> {
-    if (!isSupabaseConfigured) return localDb.getRoomStatistics(token);
+    if (!isSupabaseConfigured()) return localDb.getRoomStatistics(token);
     try {
       const { data, error } = await supabase!.rpc('get_room_statistics', {
         p_token: token,
@@ -527,7 +532,7 @@ export class ContributionService {
     organizerToken: string,
     contribution: AddContributionDTO
   ): Promise<ApiResponse<ContributionResponse>> {
-    if (!isSupabaseConfigured) return localDb.addContribution(organizerToken, contribution);
+    if (!isSupabaseConfigured()) return localDb.addContribution(organizerToken, contribution);
     try {
       // Validate amount
       if (contribution.amount <= 0) {
@@ -582,7 +587,7 @@ export class ContributionService {
     organizerToken: string,
     update: UpdateContributionDTO
   ): Promise<ApiResponse<ContributionResponse>> {
-    if (!isSupabaseConfigured) return localDb.updateContribution(organizerToken, update);
+    if (!isSupabaseConfigured()) return localDb.updateContribution(organizerToken, update);
     try {
       // Validate amount if provided
       if (update.amount !== undefined && update.amount <= 0) {
@@ -628,7 +633,7 @@ export class ContributionService {
     organizerToken: string,
     contributionId: string
   ): Promise<ApiResponse<ContributionResponse>> {
-    if (!isSupabaseConfigured) return localDb.deleteContribution(organizerToken, contributionId);
+    if (!isSupabaseConfigured()) return localDb.deleteContribution(organizerToken, contributionId);
     try {
       const { data, error } = await supabase!.rpc('delete_contribution', {
         p_organizer_token: organizerToken,
