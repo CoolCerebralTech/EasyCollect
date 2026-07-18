@@ -187,7 +187,7 @@ export class ReceiptGeneratorService {
         <div class="receipt">
           <div class="header">
             <div class="logo">💚</div>
-            <div class="app-name">The Ledger</div>
+            <div class="app-name">EasyCollect</div>
             <div class="receipt-title">Certified Contribution Receipt</div>
             <div class="verified-badge">✓ VERIFIED</div>
           </div>
@@ -327,7 +327,7 @@ export class ReceiptGeneratorService {
 
     return `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💚 THE LEDGER
+💚 EasyCollect
    CONTRIBUTION RECEIPT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

@@ -388,7 +388,7 @@ export const HomePage: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
             <div className="font-bold text-slate-900 text-lg mb-0.5">
-              The Ledger 💚
+              EasyCollect 💚
             </div>
             <p className="text-sm text-slate-500">
               Built for Kenyan groups tired of scrolling.

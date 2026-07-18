@@ -35,14 +35,14 @@ if (supabaseUrl && supabaseAnonKey) {
     .finally(() => {
       if (!supabaseReachable) {
         console.info(
-          '[The Ledger] Supabase project is unreachable (paused or down). ' +
+          '[EasyCollect] Supabase project is unreachable (paused or down). ' +
             'Switching to on-device demo mode automatically. All data stays on this phone.'
         );
       }
     });
 } else {
   console.info(
-    '[The Ledger] Running in local demo mode (no VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY). ' +
+    '[EasyCollect] Running in local demo mode (no VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY). ' +
       'All data is stored on this device only. Set those vars to connect a live Supabase backend.'
   );
 }

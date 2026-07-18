@@ -105,6 +105,6 @@ Your support means a lot to us! 💚`;
 
 ${description ? `${description}\n\n` : ''}Join and track contributions here: ${roomUrl}
 
-Powered by The Ledger 💚`;
+Powered by EasyCollect 💚`;
   }
 }
