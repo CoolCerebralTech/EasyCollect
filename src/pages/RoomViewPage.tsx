@@ -78,7 +78,7 @@ export const RoomViewPage: React.FC = () => {
           <div className="text-6xl mb-4 grayscale opacity-50">🏚️</div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Room Not Found</h2>
           <p className="text-slate-600 mb-6">
-            {error || 'This ledger link is invalid or has been deleted.'}
+            {error || 'This link is invalid or has been removed.'}
           </p>
           <Button onClick={() => navigate('/')} variant="secondary">
             Go Home
@@ -256,7 +256,7 @@ export const RoomViewPage: React.FC = () => {
             <div className="text-6xl mb-4 opacity-50">🍃</div>
             <h3 className="text-xl font-bold text-slate-800 mb-2">No contributions yet</h3>
             <p className="text-slate-500 max-w-sm mx-auto mb-6">
-              This ledger is fresh! Share the link with your group or add the first payment to get started.
+              This group is fresh! Share the link with your members, or add the first payment to get started.
             </p>
             {canEdit ? (
               <Button onClick={() => setShowContributionForm(true)} size="lg">

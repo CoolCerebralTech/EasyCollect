@@ -50,7 +50,7 @@ export const CreateRoomPage: React.FC = () => {
         
         showToast({
           type: 'success',
-          message: 'Group ledger created successfully! 🎉',
+          message: 'Your group link is ready! 🎉',
         });
       } else {
         showToast({
@@ -109,10 +109,10 @@ _Note: Payments are still sent to the treasurer via M-Pesa as usual._`;
           </button>
 
           <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-2 sm:mb-3 tracking-tight">
-            Let's set up your group ledger
+            Create your group link
           </h1>
           <p className="text-base sm:text-lg text-slate-600">
-            Takes less than a minute. No sign-ups, no app for your members to download.
+            Takes less than a minute. No sign-up, no app for members to download.
           </p>
         </div>
 
@@ -126,7 +126,7 @@ _Note: Payments are still sent to the treasurer via M-Pesa as usual._`;
         </div>
         
         <p className="text-center text-xs text-slate-400 mt-8">
-          By creating a room, you agree that Chama Ledger is a tracking tool only and does not handle actual funds.
+          We don't touch your money. This is just a shared list — payments happen on M-Pesa, as always.
         </p>
       </div>
 
@@ -144,10 +144,10 @@ _Note: Payments are still sent to the treasurer via M-Pesa as usual._`;
                 <span className="text-3xl sm:text-4xl">🎉</span>
               </div>
               <h2 className="text-xl sm:text-3xl font-bold text-slate-900 mb-2">
-                Your Ledger is Ready!
+                Your group link is ready!
               </h2>
               <p className="text-sm sm:text-base text-slate-600">
-                You are the organizer. These are your keys.
+                You're the organizer. These are your two links — keep the admin one private.
               </p>
             </div>
 

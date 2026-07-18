@@ -8,3 +8,12 @@
     display: none;
   }
 }
+
+/* Slide/fade entrance used by wizard step transitions and error messages */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.22s ease-out;
+}
