@@ -156,10 +156,10 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════
-          2. BENTO GRID — 6 large use-case cards
+          2. BENTO GRID — crypto-dashboard style, large→small
       ═══════════════════════════════════════════════════ */}
-      <div id="collecting-for" className="py-16 sm:py-20 bg-[#F8FAFC]">
-        <div className="max-w-5xl mx-auto px-4">
+      <div id="collecting-for" className="py-16 sm:py-24 bg-[#F8FAFC]">
+        <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-10 sm:mb-14">
             <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-3">
               Collecting money for...?
@@ -169,59 +169,101 @@ export const HomePage: React.FC = () => {
             </p>
           </div>
 
-          {/* Bento grid: asymmetric, modern */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 auto-rows-[120px] sm:auto-rows-[150px]">
-            {/* Large feature card — Road Trip */}
-            <div className="col-span-2 row-span-2 group bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-lg shadow-emerald-200/40 hover:shadow-xl hover:shadow-emerald-300/40 hover:-translate-y-1 transition-all duration-300 cursor-default">
-              <div className="text-5xl sm:text-6xl group-hover:scale-110 transition-transform duration-300">🚗</div>
-              <div>
+          {/* Tier 1: Two large feature cards (3+3 cols) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+            {/* Road trips — hero gradient */}
+            <div className="group relative h-48 sm:h-56 rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-600 p-6 sm:p-8 shadow-lg shadow-emerald-200/40 hover:shadow-xl hover:shadow-emerald-300/40 hover:-translate-y-1 transition-all duration-300 cursor-default">
+              <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur text-white text-[10px] font-bold tracking-wide opacity-80">POPULAR</div>
+              <div className="text-5xl sm:text-6xl mb-auto group-hover:scale-110 transition-transform duration-300">🚗</div>
+              <div className="mt-4">
                 <div className="text-xl sm:text-2xl font-bold text-white">Road trips</div>
                 <div className="text-sm text-emerald-50/80 mt-1">Fuel, Airbnb, food — one link for everyone</div>
               </div>
             </div>
 
-            {/* Birthday — tall */}
-            <div className="row-span-2 group bg-white rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default">
-              <div className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-300">🎂</div>
+            {/* Weddings — hero warm gradient */}
+            <div className="group relative h-48 sm:h-56 rounded-3xl overflow-hidden bg-gradient-to-br from-amber-400 to-orange-500 p-6 sm:p-8 shadow-lg shadow-amber-200/40 hover:shadow-xl hover:shadow-amber-300/40 hover:-translate-y-1 transition-all duration-300 cursor-default">
+              <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur text-white text-[10px] font-bold tracking-wide opacity-80">POPULAR</div>
+              <div className="text-5xl sm:text-6xl mb-auto group-hover:scale-110 transition-transform duration-300">💍</div>
+              <div className="mt-4">
+                <div className="text-xl sm:text-2xl font-bold text-white">Weddings & Harambees</div>
+                <div className="text-sm text-amber-50/80 mt-1">Welfare, family support, contributions</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tier 2: Medium cards (2+2+2 cols on desktop, 6-col grid) */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-3 sm:mb-4">
+            {/* Birthday */}
+            <div className="col-span-1 sm:col-span-2 lg:col-span-2 group h-32 sm:h-36 bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default flex flex-col justify-between">
+              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-300">🎂</div>
               <div>
                 <div className="text-base sm:text-lg font-bold text-slate-900">Birthday gifts</div>
                 <div className="text-xs text-slate-400 mt-0.5">Chip in for the surprise</div>
               </div>
             </div>
 
-            {/* Rent */}
-            <div className="group bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default">
+            {/* House rent */}
+            <div className="col-span-1 sm:col-span-2 lg:col-span-2 group h-32 sm:h-36 bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default flex flex-col justify-between">
               <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-300">🏠</div>
-              <div className="text-sm sm:text-base font-bold text-slate-900 mt-2">House rent</div>
-            </div>
-
-            {/* Graduation */}
-            <div className="group bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default">
-              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-300">🎓</div>
-              <div className="text-sm sm:text-base font-bold text-slate-900 mt-2">Graduation</div>
-            </div>
-
-            {/* Weddings — wide */}
-            <div className="col-span-2 group bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-5 sm:p-6 shadow-sm hover:shadow-md hover:-translate-y-1 border border-amber-100 transition-all duration-300 cursor-default">
-              <div className="flex items-center gap-4">
-                <div className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-300">💍</div>
-                <div>
-                  <div className="text-base sm:text-lg font-bold text-slate-900">Weddings & Fundraisers</div>
-                  <div className="text-xs text-slate-500 mt-0.5">Harambees, welfare, family support</div>
-                </div>
+              <div>
+                <div className="text-base sm:text-lg font-bold text-slate-900">House rent</div>
+                <div className="text-xs text-slate-400 mt-0.5">Roommates, shared bills</div>
               </div>
             </div>
 
-            {/* Office farewell */}
-            <div className="group bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default">
-              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-300">💼</div>
-              <div className="text-sm sm:text-base font-bold text-slate-900 mt-2">Office gifts</div>
+            {/* Graduation */}
+            <div className="col-span-1 sm:col-span-2 lg:col-span-2 group h-32 sm:h-36 bg-white rounded-3xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default flex flex-col justify-between">
+              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-300">🎓</div>
+              <div>
+                <div className="text-base sm:text-lg font-bold text-slate-900">Graduation</div>
+                <div className="text-xs text-slate-400 mt-0.5">Class gifts, ceremonies</div>
+              </div>
             </div>
           </div>
 
-          {/* Subtle "and more" */}
-          <p className="text-center text-slate-400 text-sm mt-6 sm:mt-8">
-            ...and football pools, gaming tournaments, campus events, party tickets, and everything else.
+          {/* Tier 3: Small accent cards (6-col grid, 2 cols each on lg) */}
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 mb-3 sm:mb-4">
+            {[
+              { emoji: '⚽', label: 'Football', sub: 'Tournaments & pools' },
+              { emoji: '🎮', label: 'Gaming', sub: 'Events & prizes' },
+              { emoji: '🏖', label: 'Airbnb', sub: 'Group weekends' },
+              { emoji: '💼', label: 'Office', sub: 'Farewell gifts' },
+              { emoji: '⛽', label: 'Fuel', sub: 'Car pooling' },
+              { emoji: '📚', label: 'Campus', sub: 'Events & trips' },
+            ].map((uc, i) => (
+              <div key={i} className="col-span-1 sm:col-span-2 lg:col-span-1 group h-24 sm:h-28 bg-white rounded-2xl p-3 sm:p-4 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 border border-slate-100 transition-all duration-300 cursor-default flex flex-col justify-between">
+                <div className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform duration-300">{uc.emoji}</div>
+                <div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-900">{uc.label}</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5 hidden sm:block">{uc.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Tier 4: Mini pills — the long tail */}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-2.5 mt-6 sm:mt-8">
+            {[
+              { emoji: '🎉', label: 'Party tickets' },
+              { emoji: '❤️', label: 'Funeral support' },
+              { emoji: '👨‍👩‍👧', label: 'Family fundraiser' },
+              { emoji: '🛫', label: 'Vacation' },
+              { emoji: '🎫', label: 'Concert tickets' },
+              { emoji: '☕', label: 'Coffee runs' },
+              { emoji: '🛒', label: 'Group buys' },
+              { emoji: '🎵', label: 'Studio sessions' },
+            ].map((uc, i) => (
+              <div key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-emerald-200 hover:-translate-y-0.5 transition-all duration-200 cursor-default">
+                <span className="text-sm sm:text-base">{uc.emoji}</span>
+                <span className="text-xs sm:text-sm font-semibold text-slate-600">{uc.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* "If it exists, we track it" anchor */}
+          <p className="text-center text-sm text-slate-500 mt-6 sm:mt-8 font-medium">
+            ...and anything else where one person collects and everyone wants to know who paid.
           </p>
         </div>
       </div>
