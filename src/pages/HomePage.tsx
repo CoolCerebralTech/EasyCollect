@@ -162,7 +162,7 @@ export const HomePage: React.FC = () => {
                   key={room.roomId}
                   onClick={() => navigate(`/room/${room.organizerToken}`)}
                   className={`
-                    group relative bg-white rounded-xl p-5 border border-slate-200 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer
+                    group relative bg-white rounded-xl p-5 border border-slate-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer
                     ${deletingId === room.roomId ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
                   `}
                 >

@@ -1,6 +1,7 @@
 // =====================================================
 // components/ui/Button.tsx
 // Reusable button component with variants
+// Tailwind v4-compatible — uses native color tokens, not v3 named scales.
 // =====================================================
 
 import React from 'react';
@@ -24,20 +25,29 @@ export const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles =
+    'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none';
 
   const variants = {
-    primary: 'bg-primary-DEFAULT text-primary-foreground hover:bg-primary-hover focus:ring-primary-DEFAULT',
-    secondary: 'bg-secondary-DEFAULT text-secondary-foreground hover:bg-secondary-hover focus:ring-secondary-DEFAULT',
-    danger: 'bg-danger-DEFAULT text-white hover:bg-danger-dark focus:ring-danger-DEFAULT',
-    ghost: 'bg-transparent text-text-subtle hover:bg-background-hover focus:ring-background-muted',
-    success: 'bg-success-DEFAULT text-white hover:bg-success-dark focus:ring-success-DEFAULT',
+    // Emerald — the Chama / money / trust color across the whole app.
+    primary:
+      'bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-500 shadow-sm',
+    // Neutral white-on-dark for secondary actions.
+    secondary:
+      'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 hover:border-slate-400 focus-visible:ring-slate-400 shadow-sm',
+    danger:
+      'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 shadow-sm',
+    // Ghost — no background, subtle hover. Used for dismissals and tertiary actions.
+    ghost:
+      'bg-transparent text-slate-600 hover:bg-slate-100 focus-visible:ring-slate-300',
+    success:
+      'bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500 shadow-sm',
   };
 
   const sizes = {
     sm: 'px-3 py-1.5 text-sm min-h-[36px]',
-    md: 'px-4 py-2 text-base min-h-[48px]',
-    lg: 'px-6 py-3 text-lg min-h-[56px]',
+    md: 'px-5 py-2.5 text-base min-h-[48px]',
+    lg: 'px-7 py-3.5 text-lg min-h-[56px]',
   };
 
   const widthClass = fullWidth ? 'w-full' : '';
