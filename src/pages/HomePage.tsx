@@ -1,7 +1,7 @@
 // =====================================================
 // pages/HomePage.tsx
-// Landing page — pain-first, Kenyan, no jargon.
-// Sells the end of "Nani amelipa?" — not a "ledger".
+// Landing page — for ANY group collecting money.
+// Not "chama software." For friends, trips, rent, gifts, events, everything.
 // =====================================================
 
 import React, { useState } from 'react';
@@ -12,6 +12,33 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { DateService } from '../services/date.service';
 import { FormatUtils } from '../utils/format.utils';
 import type { Currency } from '../lib/types';
+
+const USE_CASES = [
+  { emoji: '🎂', label: 'Birthday gift' },
+  { emoji: '🚗', label: 'Road trip' },
+  { emoji: '🏠', label: 'House rent' },
+  { emoji: '🏖', label: 'Airbnb weekend' },
+  { emoji: '🎓', label: 'Graduation' },
+  { emoji: '⚽', label: 'Football tournament' },
+  { emoji: '🎮', label: 'Gaming event' },
+  { emoji: '💼', label: 'Office farewell' },
+  { emoji: '⛽', label: 'Fuel contribution' },
+  { emoji: '💍', label: 'Wedding gift' },
+  { emoji: '❤️', label: 'Funeral support' },
+  { emoji: '🎉', label: 'Party tickets' },
+  { emoji: '📚', label: 'Campus event' },
+  { emoji: '👨‍👩‍👧', label: 'Family fundraiser' },
+];
+
+const FAMILIAR_QUOTES = [
+  '"I already paid."',
+  '"Who\'s collecting?"',
+  '"Check above."',
+  '"How much do we have?"',
+  '"What\'s the till number?"',
+  '"I\'ll send later."',
+  '"Can you confirm mine?"',
+];
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -36,10 +63,9 @@ export const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans antialiased">
       {/* ─────────────────────────────────────────────────
-          1. HERO — Pain first. Swahili hook. No jargon.
+          1. HERO — broad positioning, not chama-only
       ───────────────────────────────────────────────── */}
       <div className="bg-white border-b border-slate-200 relative overflow-hidden">
-        {/* Soft gradient mesh */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute -top-32 -right-24 w-[34rem] h-[34rem] bg-gradient-to-br from-emerald-100 via-teal-50 to-transparent rounded-full blur-3xl opacity-70" />
           <div className="absolute top-40 -left-32 w-[28rem] h-[28rem] bg-gradient-to-tr from-lime-100 via-emerald-50 to-transparent rounded-full blur-3xl opacity-60" />
@@ -47,25 +73,29 @@ export const HomePage: React.FC = () => {
 
         <div className="max-w-6xl mx-auto px-4 pt-12 pb-16 sm:pt-16 sm:pb-20 relative">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left: pain → shortcut */}
+            {/* Left: broad pain → shortcut */}
             <div className="text-left z-10">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-xs sm:text-sm font-semibold mb-5">
                 <span aria-hidden>🇰🇪</span>
-                <span>For Chamas, Harambees & Committee Funds</span>
+                <span>For any group collecting money</span>
               </div>
 
               <h1 className="text-[2rem] sm:text-5xl lg:text-[3.5rem] font-extrabold text-slate-900 tracking-tight mb-4 sm:mb-5 leading-[1.08]">
-                Stop answering{' '}
+                Collect money without the{' '}
                 <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-                  &ldquo;Nani amelipa?&rdquo;
-                </span>{' '}
-                every day.
+                  WhatsApp chaos
+                </span>
+                .
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-600 mb-7 sm:mb-8 leading-relaxed max-w-lg">
-                Every payment shows up on one shared list. No more scrolling through
-                200+ WhatsApp messages. No more <em>&ldquo;I paid yesterday.&rdquo;</em> Just
-                send one link to the group.
+              <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-8 leading-relaxed max-w-lg">
+                Birthdays, trips, rent, events, gifts, welfare, chamas — if people are
+                paying one person, everyone deserves one shared payment list.
+              </p>
+
+              {/* The one-liner that includes every use case */}
+              <p className="text-sm sm:text-base font-semibold text-slate-900 mb-6 sm:mb-7 max-w-lg">
+                If one person is collecting money, this is for you.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -79,35 +109,35 @@ export const HomePage: React.FC = () => {
                 <button
                   onClick={() =>
                     document
-                      .getElementById('how-it-works')
+                      .getElementById('collecting-for')
                       ?.scrollIntoView({ behavior: 'smooth' })
                   }
                   className="px-7 sm:px-8 py-6 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 transition-colors text-base sm:text-lg"
                 >
-                  See how it works ↓
+                  See use cases ↓
                 </button>
               </div>
             </div>
 
-            {/* Right: WhatsApp → Shared list transformation */}
+            {/* Right: WhatsApp → Shared list transformation (trip-themed) */}
             <div className="relative z-10">
               {/* WhatsApp "before" card */}
               <div className="bg-[#075E54] rounded-2xl p-4 sm:p-5 shadow-xl mb-4 max-w-sm mx-auto lg:ml-auto lg:mr-0">
                 <div className="text-white/90 text-xs font-semibold mb-3 px-1">
-                  WhatsApp group · 11:47 PM
+                  Weekend Trip · 11:47 PM
                 </div>
                 <div className="space-y-2">
                   <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 text-sm text-slate-800 max-w-[85%]">
-                    <span className="font-semibold text-emerald-700">John:</span> Nililipa jana.
+                    <span className="font-semibold text-emerald-700">Kevin:</span> Nililipa jana.
                   </div>
                   <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 text-sm text-slate-800 max-w-[85%] ml-auto">
-                    <span className="font-semibold text-emerald-700">Mary:</span> Check hapo juu.
+                    <span className="font-semibold text-emerald-700">Brian:</span> Check hapo juu.
                   </div>
                   <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 text-sm text-slate-800 max-w-[85%]">
-                    <span className="font-semibold text-emerald-700">Brian:</span> Ni nani hajalipa?
+                    <span className="font-semibold text-emerald-700">Aisha:</span> Ni nani hajalipa?
                   </div>
                   <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 text-sm text-slate-800 max-w-[85%] ml-auto">
-                    <span className="font-semibold text-emerald-700">Treasurer:</span> 😩
+                    <span className="font-semibold text-emerald-700">Organizer:</span> 😩
                   </div>
                 </div>
               </div>
@@ -119,23 +149,27 @@ export const HomePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Shared list "after" card */}
+              {/* Shared list "after" card — trip themed */}
               <div className="bg-white rounded-2xl shadow-xl max-w-sm mx-auto lg:ml-auto lg:mr-0 overflow-hidden">
                 <div className="bg-gradient-to-br from-emerald-600 to-teal-600 px-5 py-4 text-white">
-                  <div className="text-xs opacity-80">Our Chama</div>
-                  <div className="font-bold text-lg">Total: KES 42,000</div>
+                  <div className="text-xs opacity-80">Weekend Trip</div>
+                  <div className="font-bold text-lg">Total: KES 18,500</div>
                 </div>
                 <div className="p-4 space-y-2.5">
                   <div className="flex justify-between items-center py-2 px-3 bg-emerald-50 rounded-lg">
-                    <span className="text-sm font-medium text-slate-800">✓ John</span>
-                    <span className="text-sm font-bold text-emerald-600">KES 2,000</span>
+                    <span className="text-sm font-medium text-slate-800">✓ Kevin</span>
+                    <span className="text-sm font-bold text-emerald-600">KES 1,500</span>
                   </div>
                   <div className="flex justify-between items-center py-2 px-3 bg-emerald-50 rounded-lg">
-                    <span className="text-sm font-medium text-slate-800">✓ Mary</span>
-                    <span className="text-sm font-bold text-emerald-600">KES 5,000</span>
+                    <span className="text-sm font-medium text-slate-800">✓ Brian</span>
+                    <span className="text-sm font-bold text-emerald-600">KES 3,000</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 px-3 bg-emerald-50 rounded-lg">
+                    <span className="text-sm font-medium text-slate-800">✓ Aisha</span>
+                    <span className="text-sm font-bold text-emerald-600">KES 2,000</span>
                   </div>
                   <div className="flex justify-between items-center py-2 px-3 bg-slate-50 rounded-lg opacity-70">
-                    <span className="text-sm font-medium text-slate-500">○ Brian</span>
+                    <span className="text-sm font-medium text-slate-500">○ Joy</span>
                     <span className="text-sm font-bold text-slate-400">Pending</span>
                   </div>
                 </div>
@@ -146,62 +180,49 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* ─────────────────────────────────────────────────
-          2. "BUILT FOR" — instant identity match
+          2. "COLLECTING FOR..." — use-case grid (modern cards)
       ───────────────────────────────────────────────── */}
-      <div className="bg-slate-50 py-10 sm:py-12 border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-5">
-            Built for
-          </h2>
-          <div className="flex flex-wrap justify-center gap-x-5 gap-y-2.5 text-base sm:text-lg font-medium text-slate-700">
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> Chamas
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> Harambees
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> Welfare groups
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> Merry-go-rounds
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> SACCO committees
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> Church contributions
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> School class funds
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> Family fundraisers
-            </span>
+      <div id="collecting-for" className="bg-slate-50 py-16 sm:py-20 border-b border-slate-200">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+              Collecting money for...?
+            </h2>
+            <p className="text-slate-500 text-sm sm:text-base">
+              If one person is collecting, there's a link for that.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {USE_CASES.map((uc, i) => (
+              <div
+                key={i}
+                className="group bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 transition-all duration-200 cursor-default"
+              >
+                <div className="text-3xl sm:text-4xl mb-2 group-hover:scale-110 transition-transform duration-200">
+                  {uc.emoji}
+                </div>
+                <div className="text-sm sm:text-base font-semibold text-slate-700">
+                  {uc.label}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* ─────────────────────────────────────────────────
-          3. "SOUNDS FAMILIAR?" — emotional mirror
+          3. "EVERY GROUP" — emotional mirror (broader)
       ───────────────────────────────────────────────── */}
       <div className="bg-white py-16 sm:py-20 border-b border-slate-200">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-3">
-            Sounds familiar?
+            Every group has one person saying...
           </h2>
           <p className="text-center text-slate-500 mb-10 text-sm sm:text-base">
-            Every Kenyan in a chama has lived this.
+            You've been in this chat. We all have.
           </p>
-          <div className="space-y-4 mb-10">
-            {[
-              '"Who hasn\'t paid?"',
-              '"I already sent yesterday."',
-              '"Check above."',
-              '"How much do we have now?"',
-              '"Please resend the till number."',
-              '"Can someone confirm my payment?"',
-            ].map((quote, i) => (
+          <div className="space-y-3 sm:space-y-4 mb-10">
+            {FAMILIAR_QUOTES.map((quote, i) => (
               <div
                 key={i}
                 className="flex items-center gap-3 sm:gap-4 bg-slate-50 rounded-xl px-4 sm:px-5 py-3.5 border border-slate-100"
@@ -212,15 +233,21 @@ export const HomePage: React.FC = () => {
                 </span>
               </div>
             ))}
+            <div className="flex items-center gap-3 sm:gap-4 bg-slate-50 rounded-xl px-4 sm:px-5 py-3.5 border border-slate-100">
+              <span className="text-lg sm:text-xl text-slate-400 flex-shrink-0">😩</span>
+              <span className="text-base sm:text-lg text-slate-700 font-medium">
+                &mdash; the organizer
+              </span>
+            </div>
           </div>
-          <p className="text-center text-lg sm:text-xl font-semibold text-slate-900">
-            That's exactly why we built this.
+          <p className="text-center text-xl sm:text-2xl font-bold text-slate-900">
+            Every group eventually becomes a payment group.
           </p>
         </div>
       </div>
 
       {/* ─────────────────────────────────────────────────
-          4. HOW IT WORKS — paste-don't-type is the hero
+          4. HOW IT WORKS — paste-don't-type is the star
       ───────────────────────────────────────────────── */}
       <div id="how-it-works" className="py-16 sm:py-20 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4">
@@ -234,10 +261,8 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 sm:gap-8 relative">
-            {/* Connecting line (desktop) */}
             <div className="hidden md:block absolute top-10 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-emerald-200 via-emerald-300 to-emerald-200 z-0" />
 
-            {/* Step 1 */}
             <div className="relative z-10 text-center">
               <div className="w-20 h-20 bg-white border-4 border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
                 <span className="text-3xl">💸</span>
@@ -246,11 +271,10 @@ export const HomePage: React.FC = () => {
                 1. Collect as usual
               </h3>
               <p className="text-sm text-slate-500 px-2 sm:px-4">
-                Members send to your M-Pesa or Airtel Money. Nothing changes for them.
+                People send to your M-Pesa or Airtel Money. Nothing changes for them.
               </p>
             </div>
 
-            {/* Step 2 — the killer feature */}
             <div className="relative z-10 text-center">
               <div className="w-20 h-20 bg-white border-4 border-emerald-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg ring-4 ring-emerald-100/50">
                 <span className="text-3xl">📋</span>
@@ -264,7 +288,6 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            {/* Step 3 */}
             <div className="relative z-10 text-center">
               <div className="w-20 h-20 bg-white border-4 border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
                 <span className="text-3xl">🔗</span>
@@ -273,7 +296,7 @@ export const HomePage: React.FC = () => {
                 3. Send the link
               </h3>
               <p className="text-sm text-slate-500 px-2 sm:px-4">
-                Share to the WhatsApp group. Everyone sees the updated list — no more DMs.
+                Share to the group chat. Everyone sees the updated list — no more DMs.
               </p>
             </div>
           </div>
@@ -353,7 +376,7 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* ─────────────────────────────────────────────────
-          6. FINAL CTA — identity transformation
+          6. FINAL CTA — coordination, not "treasurer"
       ───────────────────────────────────────────────── */}
       <div className="bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-700 py-16 sm:py-20 text-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none" aria-hidden>
@@ -362,10 +385,10 @@ export const HomePage: React.FC = () => {
         </div>
         <div className="relative max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4 sm:mb-5 tracking-tight">
-            Be the treasurer everyone trusts.
+            Spend less time tracking payments.
           </h2>
           <p className="text-emerald-50 text-base sm:text-lg mb-8 max-w-xl mx-auto">
-            Spend less time chasing payments and more time running your group.
+            More time enjoying the event. One link. Zero confusion.
           </p>
           <Button
             size="lg"
@@ -391,7 +414,7 @@ export const HomePage: React.FC = () => {
               EasyCollect 💚
             </div>
             <p className="text-sm text-slate-500">
-              Built for Kenyan groups tired of scrolling.
+              The easiest way to track group contributions.
             </p>
           </div>
           <div className="flex gap-5 text-sm text-slate-500">
