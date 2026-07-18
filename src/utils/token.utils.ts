@@ -34,10 +34,10 @@ export class TokenUtils {
   /**
    * Generate shareable URLs for both roles
    */
-  static generateShareableUrls(stewardToken: string, viewerToken: string) {
+  static generateShareableUrls(organizerToken: string, contributorToken: string) {
     return {
-      steward: this.generateRoomUrl(stewardToken),
-      viewer: this.generateRoomUrl(viewerToken),
+      organizer: this.generateRoomUrl(organizerToken),
+      contributor: this.generateRoomUrl(contributorToken),
     };
   }
 

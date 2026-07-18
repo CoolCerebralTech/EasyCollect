@@ -4,15 +4,15 @@
 // =====================================================
 
 import { db } from '../services/db.service';
-import type { AddContributionDTO, UpdateContributionDTO } from '../lib/app.types';
+import type { AddContributionDTO, UpdateContributionDTO } from '../lib/types';
 import { useAsyncAction } from './useAsyncAction'; // Import the new hook
 
-export const useContributions = (stewardToken: string) => {
+export const useContributions = (organizerToken: string) => {
   const { execute, loading } = useAsyncAction();
 
   const addContribution = async (contribution: AddContributionDTO) => {
     const success = await execute(
-      () => db.contributions.addContribution(stewardToken, contribution),
+      () => db.contributions.addContribution(organizerToken, contribution),
       {
         successMessage: 'Contribution added successfully!',
         errorMessage: 'Failed to add contribution', // Generic message, specific error will be shown by useAsyncAction
@@ -23,7 +23,7 @@ export const useContributions = (stewardToken: string) => {
 
   const updateContribution = async (update: UpdateContributionDTO) => {
     const success = await execute(
-      () => db.contributions.updateContribution(stewardToken, update),
+      () => db.contributions.updateContribution(organizerToken, update),
       {
         successMessage: 'Contribution updated successfully!',
         errorMessage: 'Failed to update contribution',
@@ -34,7 +34,7 @@ export const useContributions = (stewardToken: string) => {
 
   const deleteContribution = async (contributionId: string) => {
     const success = await execute(
-      () => db.contributions.deleteContribution(stewardToken, contributionId),
+      () => db.contributions.deleteContribution(organizerToken, contributionId),
       {
         successMessage: 'Contribution deleted successfully!',
         errorMessage: 'Failed to delete contribution',

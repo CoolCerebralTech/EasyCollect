@@ -41,10 +41,10 @@ export interface Room {
   description: string | null;
   target_amount: number | null;
   currency: Currency;
-  // ✅ Added optional tokens because get_room_details RPC returns them
-  steward_token?: string; 
-  viewer_token?: string; 
-  pin_hash?: string; // Usually hidden from client
+  // Tokens returned by get_room_details RPC. Named to match the database schema.
+  organizer_token?: string;
+  contributor_token?: string;
+  pin_hash?: string; // Usually hidden from the client
   status: RoomStatus;
   created_at: string;
   expires_at: string | null;
@@ -93,7 +93,7 @@ export interface CreateRoomParams {
   p_settings?: Partial<RoomSettings>;
 }
 
-export interface ValidateStewardAccessParams {
+export interface ValidateOrganizerAccessParams {
   p_token: string;
   p_pin: string;
 }
@@ -103,7 +103,7 @@ export interface GetRoomDetailsParams {
 }
 
 export interface AddContributionParams {
-  p_steward_token: string;
+  p_organizer_token: string;
   p_name: string;
   p_amount: number;
   p_payment_method: PaymentMethod;
@@ -115,7 +115,7 @@ export interface AddContributionParams {
 }
 
 export interface UpdateContributionParams {
-  p_steward_token: string;
+  p_organizer_token: string;
   p_contribution_id: string;
   p_name?: string;
   p_amount?: number;
@@ -126,12 +126,12 @@ export interface UpdateContributionParams {
 }
 
 export interface DeleteContributionParams {
-  p_steward_token: string;
+  p_organizer_token: string;
   p_contribution_id: string;
 }
 
 export interface ArchiveRoomParams {
-  p_steward_token: string;
+  p_organizer_token: string;
 }
 
 export interface GetRoomStatisticsParams {
@@ -143,16 +143,16 @@ export interface GetRoomStatisticsParams {
 // =====================================================
 export interface CreateRoomResponse {
   room_id: string;
-  steward_token: string;
-  viewer_token: string;
-  steward_url: string;
-  viewer_url: string;
+  organizer_token: string;
+  contributor_token: string;
+  organizer_url: string;
+  contributor_url: string;
 }
 
-export interface ValidateStewardAccessResponse {
+export interface ValidateOrganizerAccessResponse {
   access_granted: boolean;
   room_id: string;
-  role: 'steward';
+  role: 'organizer';
 }
 
 export interface RoomDetails {
@@ -262,8 +262,8 @@ export interface ParsedSMS {
 export interface StoredRoom {
   roomId: string;
   title: string;
-  stewardToken: string;
-  role: 'steward';
+  organizerToken: string;
+  role: 'organizer';
   lastAccessed: string;
   status: RoomStatus;
   description?: string; // Optional

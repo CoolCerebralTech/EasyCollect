@@ -7,7 +7,7 @@ import { supabase } from './supabase.service';
 import {
   type CreateRoomDTO,
   type CreateRoomResponse,
-  type ValidateStewardAccessResponse,
+  type ValidateOrganizerAccessResponse,
   type RoomDetails,
   type AddContributionDTO,
   type UpdateContributionDTO,
@@ -15,7 +15,7 @@ import {
   type RoomStatistics,
   type ApiResponse,
   LedgerError,
-} from '../lib/app.types';
+} from '../lib/types';
 
 // =====================================================
 // Error Handling Utility
@@ -93,9 +93,9 @@ export class RoomService {
   static async validateOrganizerAccess(
     token: string,
     pin: string
-  ): Promise<ApiResponse<ValidateStewardAccessResponse>> {
+  ): Promise<ApiResponse<ValidateOrganizerAccessResponse>> {
     try {
-      const { data, error } = await supabase.rpc('validate_steward_access', {
+      const { data, error } = await supabase.rpc('validate_organizer_access', {
         p_token: token,
         p_pin: pin,
       });
@@ -104,7 +104,7 @@ export class RoomService {
 
       return {
         success: true,
-        data: data as ValidateStewardAccessResponse,
+        data: data as ValidateOrganizerAccessResponse,
       };
     } catch (error) {
       return {
@@ -153,7 +153,7 @@ export class RoomService {
   static async archiveRoom(organizerToken: string): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const { data, error } = await supabase.rpc('archive_room', {
-        p_steward_token: organizerToken,
+        p_organizer_token: organizerToken,
       });
 
       if (error) handleError(error, 'archiveRoom');
@@ -232,7 +232,7 @@ export class ContributionService {
       }
 
       const { data, error } = await supabase.rpc('add_contribution', {
-        p_steward_token: organizerToken,
+        p_organizer_token: organizerToken,
         p_name: contribution.name,
         p_amount: contribution.amount,
         p_payment_method: contribution.paymentMethod,
@@ -278,7 +278,7 @@ export class ContributionService {
       }
 
       const { data, error } = await supabase.rpc('update_contribution', {
-        p_steward_token: organizerToken,
+        p_organizer_token: organizerToken,
         p_contribution_id: update.contributionId,
         p_name: update.name || null,
         p_amount: update.amount || null,
@@ -315,7 +315,7 @@ export class ContributionService {
   ): Promise<ApiResponse<ContributionResponse>> {
     try {
       const { data, error } = await supabase.rpc('delete_contribution', {
-        p_steward_token: organizerToken,
+        p_organizer_token: organizerToken,
         p_contribution_id: contributionId,
       });
 
@@ -421,7 +421,7 @@ export class LocalStorageManager {
   static saveRoom(room: {
     roomId: string;
     title: string;
-    stewardToken: string;
+    organizerToken: string;
     status: string;
   }): void {
     try {
@@ -433,7 +433,7 @@ export class LocalStorageManager {
       // Add new/updated room
       filtered.unshift({
         ...room,
-        role: 'steward' as const,
+        role: 'organizer' as const,
         lastAccessed: new Date().toISOString(),
       });
 
@@ -458,8 +458,8 @@ export class LocalStorageManager {
   static getRooms(): Array<{
     roomId: string;
     title: string;
-    stewardToken: string;
-    role: 'steward';
+    organizerToken: string;
+    role: 'organizer';
     lastAccessed: string;
     status: string;
   }> {

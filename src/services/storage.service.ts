@@ -12,8 +12,8 @@ import type { RoomStatus } from '../lib/types';
 export interface StoredRoom {
   roomId: string;
   title: string;
-  stewardToken: string;
-  role: 'steward';
+  organizerToken: string;
+  role: 'organizer';
   lastAccessed: string;
   status: RoomStatus;
   description?: string;

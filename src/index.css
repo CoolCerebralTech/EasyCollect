@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* Hide scrollbar for horizontal tab strips while keeping scroll behavior */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -77,7 +77,7 @@ export const usePINGate = (token: string) => {
     }
 
     try {
-      const result = await db.rooms.validateStewardAccess(token, pin);
+      const result = await db.rooms.validateOrganizerAccess(token, pin);
 
       if (result.success) {
         setIsAuthenticated(true);

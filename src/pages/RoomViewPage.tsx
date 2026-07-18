@@ -118,18 +118,18 @@ export const RoomViewPage: React.FC = () => {
       <OfflineIndicator />
 
       {/* --- HEADER SECTION --- */}
-      <div className={`${isSteward ? 'bg-amber-600' : 'bg-green-700'} text-white shadow-lg transition-colors duration-300`}>
-        <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className={`${isOrganizer ? 'bg-amber-600' : 'bg-green-700'} text-white shadow-lg transition-colors duration-300`}>
+        <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             
             {/* Title & Stats */}
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3 mb-2">
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{room.room.title}</h1>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                <h1 className="text-xl sm:text-3xl font-bold tracking-tight break-words">{room.room.title}</h1>
                 <Badge variant={room.room.status === 'active' ? 'success' : 'neutral'} className="shadow-sm">
                   {room.room.status}
                 </Badge>
-                {isSteward && (
+                {isOrganizer && (
                   <span className="bg-amber-800/40 border border-amber-400/30 text-amber-50 text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1">
                     👑 Admin
                   </span>
@@ -142,27 +142,27 @@ export const RoomViewPage: React.FC = () => {
                 </p>
               )}
 
-              {/* Quick Stats Grid */}
-              <div className="flex flex-wrap gap-4 mt-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/10">
+              {/* Quick Stats Grid - horizontal scroll on mobile */}
+              <div className="flex flex-wrap gap-2 sm:gap-4 mt-4 overflow-x-auto -mx-1 px-1 pb-1">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2 border border-white/10 shrink-0">
                   <div className="text-xs text-white/60 uppercase tracking-wider font-semibold">Total Raised</div>
-                  <div className="text-xl font-bold font-mono">
+                  <div className="text-lg sm:text-xl font-bold font-mono">
                     {FormatUtils.formatCurrency(room.room.total_collected, room.room.currency)}
                   </div>
                 </div>
                 
                 {room.room.target_amount && (
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/10">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2 border border-white/10 shrink-0">
                     <div className="text-xs text-white/60 uppercase tracking-wider font-semibold">Target</div>
-                    <div className="text-xl font-bold font-mono">
+                    <div className="text-lg sm:text-xl font-bold font-mono">
                       {FormatUtils.formatCurrency(room.room.target_amount, room.room.currency)}
                     </div>
                   </div>
                 )}
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/10">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2 border border-white/10 shrink-0">
                   <div className="text-xs text-white/60 uppercase tracking-wider font-semibold">Contributors</div>
-                  <div className="text-xl font-bold font-mono flex items-center gap-2">
+                  <div className="text-lg sm:text-xl font-bold font-mono flex items-center gap-2">
                     {room.room.contributor_count} <span className="text-sm font-normal opacity-60">people</span>
                   </div>
                 </div>
@@ -203,18 +203,19 @@ export const RoomViewPage: React.FC = () => {
       <div className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-14">
-            <div className="flex gap-6 h-full">
+            <div className="flex gap-4 sm:gap-6 h-full overflow-x-auto no-scrollbar">
               {/* ✅ Mapped using the typed 'tabs' array */}
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`
-                    h-full flex items-center gap-2 text-sm font-medium border-b-2 transition-all px-1
-                    ${activeTab === tab.id 
-                      ? `border-${isSteward ? 'amber' : 'green'}-600 text-${isSteward ? 'amber' : 'green'}-700` 
-                      : 'border-transparent text-slate-500 hover:text-slate-800'}
-                  `}
+                  className={`h-full flex items-center gap-2 text-sm font-medium border-b-2 transition-all px-1 whitespace-nowrap ${
+                    activeTab === tab.id 
+                      ? (isOrganizer 
+                          ? 'border-amber-600 text-amber-700' 
+                          : 'border-green-600 text-green-700')
+                      : 'border-transparent text-slate-500 hover:text-slate-800'
+                  }`}
                 >
                   <span className="text-lg">{tab.icon}</span>
                   {tab.label}
@@ -227,14 +228,16 @@ export const RoomViewPage: React.FC = () => {
                {canEdit ? (
                  <button 
                   onClick={() => setShowContributionForm(true)}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-white shadow-sm ${isSteward ? 'bg-amber-600' : 'bg-slate-900'}`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-sm active:scale-90 transition-transform ${isOrganizer ? 'bg-amber-600' : 'bg-slate-900'}`}
+                  aria-label="Add payment"
                  >
                    ➕
                  </button>
                ) : (
                  <button 
                   onClick={() => setShowShareModal(true)}
-                  className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 shadow-sm"
+                  className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 shadow-sm active:scale-90 transition-transform"
+                  aria-label="Share link"
                  >
                    🔗
                  </button>
@@ -344,8 +347,30 @@ export const RoomViewPage: React.FC = () => {
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
           roomDetails={room}
-          viewerToken={room.room.viewer_token || ''}
+          viewerToken={room.room.contributor_token || ''}
         />
+      )}
+      {/* --- STICKY MOBILE BOTTOM BAR (organizers only) --- */}
+      {canEdit && (
+        <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setShowContributionForm(true)}
+              size="lg"
+              fullWidth
+              className="font-semibold min-h-[48px] shadow-md"
+            >
+              ➕ Add Payment
+            </Button>
+            <button
+              onClick={() => setShowShareModal(true)}
+              className="px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center min-w-[48px] min-h-[48px] active:scale-95 transition-transform"
+              aria-label="Share link"
+            >
+              🔗
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

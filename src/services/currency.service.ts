@@ -4,7 +4,7 @@
 // =====================================================
 
 import { CURRENCIES, EXCHANGE_RATES } from '../lib/constants';
-import type { Currency } from '../lib/app.types';
+import type { Currency } from '../lib/types';
 import { FormatUtils } from '../utils/format.utils';
 
 export class CurrencyService {

@@ -5,9 +5,9 @@
 
 import { useCallback, useState } from 'react';
 import { useToast } from '../components/ui/Toast';
-import { LedgerError } from '../lib/app.types'; // Assuming LedgerError is in app.types
+import { LedgerError } from '../lib/types'; // Assuming LedgerError is in types
 
-export const useAsyncAction = <TArgs extends any[], TResult = any>() => {
+export const useAsyncAction = <TArgs extends unknown[], TResult = unknown>() => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { showToast } = useToast();

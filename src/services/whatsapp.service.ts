@@ -5,7 +5,7 @@
 
 import { APP_CONFIG } from '../lib/constants';
 import { REMINDER_TEMPLATES, type ReminderParams } from '../lib/constants';
-import type { Currency } from '../lib/app.types';
+import type { Currency } from '../lib/types';
 
 export class WhatsAppService {
   /**

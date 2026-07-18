@@ -116,7 +116,7 @@ export const COLORS = {
   },
   
   // Steward mode alert (Admin Mode)
-  steward: {
+  organizer: {
     bg: '#FFF7ED',    // Orange-50
     border: '#FB923C', // Orange-400
     text: '#C2410C',   // Orange-700
@@ -136,7 +136,7 @@ export const COLORS = {
 // Currency configurations
 // =====================================================
 
-import type { Currency } from '../lib/app.types';
+import type { Currency } from '../lib/types';
 
 export interface CurrencyConfig {
   code: Currency;
@@ -256,7 +256,7 @@ export const MILESTONES: Milestone[] = [
 // Payment method configurations
 // =====================================================
 
-import type { PaymentMethod } from '../lib/app.types';
+import type { PaymentMethod } from '../lib/types';
 
 export interface PaymentMethodConfig {
   id: PaymentMethod;
