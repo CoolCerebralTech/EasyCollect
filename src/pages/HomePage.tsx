@@ -274,7 +274,7 @@ export const HomePage: React.FC = () => {
             <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
               <div className="text-3xl mb-4">🔒</div>
               <h4 className="text-white font-bold mb-2">Private & Secure</h4>
-              <p className="text-sm leading-relaxed">Only people with the link can view. Only you (the steward) can edit.</p>
+              <p className="text-sm leading-relaxed">Only people with the link can view. Only you (the organizer) can edit.</p>
             </div>
             <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
               <div className="text-3xl mb-4">⚡</div>

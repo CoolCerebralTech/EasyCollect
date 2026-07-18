@@ -3,21 +3,17 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  // Surface this clearly in the console before the app refuses to load data.
-  // The throwing behaviour is intentional: every service in db.service.ts
-  // depends on this client existing; a null guard at every call site is worse
-  // than a single loud failure the deployer has to fix.
-  console.error(
-    '[The Ledger] Missing Supabase environment variables. ' +
-    'Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment ' +
-    '(locally: .env, on Vercel: Project Settings → Environment Variables). ' +
-    'See .env.example for the expected keys.'
-  );
-  throw new Error(
-    'The Ledger is missing its database connection. ' +
-    'Ask the organizer to set the VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.'
+// In demo / showcase mode (no Supabase env vars configured), supabase stays null
+// and db.service.ts transparently falls back to a localStorage-backed mock.
+// This lets the UI run end-to-end without a live backend.
+export const supabase =
+  supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+
+export const isSupabaseConfigured = Boolean(supabase);
+
+if (!isSupabaseConfigured) {
+  console.info(
+    '[The Ledger] Running in local demo mode (no VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY). ' +
+      'All data is stored on this device only. Set those vars to connect a live Supabase backend.'
   );
 }
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);

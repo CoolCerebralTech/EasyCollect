@@ -136,120 +136,167 @@ export const RoomCreationWizard: React.FC<RoomCreationWizardProps> = ({
           If styling duplicates, you can remove <Card> wrapper. */}
       <div>
         <div className="mb-6">
-          <div className="flex justify-between items-end mb-2">
-             <h2 className="text-xl font-bold text-gray-900">
-              Create New Room
-            </h2>
-            <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+          <div className="flex justify-between items-center mb-3">
+             <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
               Step {step} of {totalSteps}
+            </span>
+            <span className="text-xs font-medium text-green-700 bg-green-50 px-3 py-1 rounded-full">
+              {step === 1 ? 'Basics' : step === 2 ? 'Goal' : 'Security'}
             </span>
           </div>
           
-          <ProgressBar value={progress} className="mt-2 h-2" />
+          <ProgressBar value={progress} className="mt-1 h-2" />
         </div>
 
         {/* Step 1: Basic Info */}
         {step === 1 && (
           <div className="space-y-6 animate-fadeIn">
-            <Input
-              label="Room Title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              error={errors.title}
-              placeholder="e.g., Wedding Committee, Office Party"
-              required
-              autoFocus
-            />
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                What are you collecting for?
+              </label>
+              <Input
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                error={errors.title}
+                placeholder="e.g., Sarah's Wedding, Office Farewell Gift"
+                required
+                autoFocus
+              />
+              {errors.title && (
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  {errors.title}
+                </p>
+              )}
+            </div>
 
-            <TextArea
-              label="Description (Optional)"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              error={errors.description}
-              placeholder="Add details about this contribution..."
-              rows={4}
-            />
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Tell your members what it's for <span className="text-slate-400 font-normal">(optional)</span>
+              </label>
+              <TextArea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                error={errors.description}
+                placeholder="e.g., Please contribute by Dec 15th. Send M-Pesa to 0712 345 678."
+                rows={4}
+              />
+              {errors.description && (
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  {errors.description}
+                </p>
+              )}
+            </div>
           </div>
         )}
 
         {/* Step 2: Financial Details */}
         {step === 2 && (
           <div className="space-y-6 animate-fadeIn">
-            <Select
-              label="Currency"
-              options={currencyOptions}
-              value={formData.currency}
-              onChange={(value) => setFormData({ ...formData, currency: value as Currency })}
-            />
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Which currency?
+              </label>
+              <Select
+                options={currencyOptions}
+                value={formData.currency}
+                onChange={(value) => setFormData({ ...formData, currency: value as Currency })}
+              />
+            </div>
 
-            <Input
-              label="Target Amount (Optional)"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.targetAmount || ''}
-              onChange={(e) => setFormData({ ...formData, targetAmount: parseFloat(e.target.value) || undefined })}
-              error={errors.targetAmount}
-              placeholder="Leave empty for open-ended collection"
-              hint="Setting a target helps track progress"
-            />
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Set a target <span className="text-slate-400 font-normal">(optional)</span>
+              </label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.targetAmount || ''}
+                onChange={(e) => setFormData({ ...formData, targetAmount: parseFloat(e.target.value) || undefined })}
+                error={errors.targetAmount}
+                placeholder="Leave empty for open-ended collection"
+              />
+              {errors.targetAmount ? (
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  {errors.targetAmount}
+                </p>
+              ) : (
+                <p className="mt-2 text-xs text-slate-500">A target helps your group see how close you are.</p>
+              )}
+            </div>
 
-            <Input
-              label="Expires in (days)"
-              type="number"
-              min="1"
-              max="365"
-              value={formData.expiresInDays}
-              onChange={(e) => setFormData({ ...formData, expiresInDays: parseInt(e.target.value) || 30 })}
-              hint="Room will become read-only after this period"
-            />
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Lock after how many days?
+              </label>
+              <Input
+                type="number"
+                min="1"
+                max="365"
+                value={formData.expiresInDays}
+                onChange={(e) => setFormData({ ...formData, expiresInDays: parseInt(e.target.value) || 30 })}
+                hint="The room becomes read-only after this period."
+              />
+            </div>
           </div>
         )}
 
         {/* Step 3: Security */}
         {step === 3 && (
           <div className="space-y-6 animate-fadeIn">
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-2">
               <div className="flex gap-3">
-                <span className="text-xl">🔐</span>
+                <span className="text-2xl shrink-0">🔐</span>
                 <div>
                   <h3 className="font-semibold text-amber-900 mb-1">
-                    Secure Your Room
+                    Lock your room with a PIN
                   </h3>
                   <p className="text-sm text-amber-800 leading-relaxed">
-                    Create a PIN to protect admin access. You will need this PIN (plus the admin link) to edit the room later.
+                    You'll need this PIN plus your admin link to add payments later. Keep it somewhere safe — there's no password reset by design.
                   </p>
                 </div>
               </div>
             </div>
 
-            <Input
-              label="Create PIN (4 digits)"
-              type="password"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={4}
-              value={formData.pin}
-              onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '') })}
-              error={errors.pin}
-              placeholder="••••"
-              required
-              className="text-center text-xl tracking-widest"
-            />
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Create a 4-digit PIN
+              </label>
+              <Input
+                type="password"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
+                value={formData.pin}
+                onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '') })}
+                error={errors.pin}
+                placeholder="••••"
+                required
+                className="text-center text-xl tracking-widest"
+              />
+            </div>
 
-            <Input
-              label="Confirm PIN"
-              type="password"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={4}
-              value={pinConfirm}
-              onChange={(e) => setPinConfirm(e.target.value.replace(/\D/g, ''))}
-              error={errors.pinConfirm}
-              placeholder="••••"
-              required
-              className="text-center text-xl tracking-widest"
-            />
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Confirm PIN
+              </label>
+              <Input
+                type="password"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
+                value={pinConfirm}
+                onChange={(e) => setPinConfirm(e.target.value.replace(/\D/g, ''))}
+                error={errors.pinConfirm}
+                placeholder="••••"
+                required
+                className="text-center text-xl tracking-widest"
+              />
+            </div>
           </div>
         )}
 

@@ -109,10 +109,10 @@ _Note: Payments are still sent to the treasurer via M-Pesa as usual._`;
           </button>
 
           <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-2 sm:mb-3 tracking-tight">
-            Set up your group ledger
+            Let's set up your group ledger
           </h1>
           <p className="text-base sm:text-lg text-slate-600">
-            Takes less than a minute. No account required.
+            Takes less than a minute. No sign-ups, no app for your members to download.
           </p>
         </div>
 
