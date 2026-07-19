@@ -29,12 +29,12 @@ export const Button: React.FC<ButtonProps> = ({
     'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none';
 
   const variants = {
-    // Emerald — the Chama / money / trust color across the whole app.
+    // Emerald — the money/trust color. Colored shadow = designed, not generic.
     primary:
-      'bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-500 shadow-sm',
+      'bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-500 shadow-sm hover:shadow-md hover:shadow-emerald-200/50',
     // Neutral white-on-dark for secondary actions.
     secondary:
-      'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 hover:border-slate-400 focus-visible:ring-slate-400 shadow-sm',
+      'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 focus-visible:ring-slate-400 shadow-sm',
     danger:
       'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 shadow-sm',
     // Ghost — no background, subtle hover. Used for dismissals and tertiary actions.

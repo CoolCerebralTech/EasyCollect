@@ -504,7 +504,7 @@ export const HomePage: React.FC = () => {
                         { name: 'Mary', amt: 'KES 1,500', paid: true },
                         { name: 'Joy', amt: 'Pending', paid: false },
                       ].map((p, i) => (
-                        <div key={i} className={`flex justify-between items-center py-1.5 px-3 bg-white rounded-lg shadow-sm border-l-3 ${p.paid ? 'border-emerald-500' : 'border-slate-200 opacity-60'}`}>
+                        <div key={i} className={`flex justify-between items-center py-1.5 px-3 bg-white rounded-lg shadow-sm border-l-[3px] ${p.paid ? 'border-emerald-500' : 'border-slate-200 opacity-60'}`}>
                           <span className={`text-xs font-semibold ${p.paid ? 'text-slate-800' : 'text-slate-500'}`}>{p.paid ? '✓' : '○'} {p.name}</span>
                           <span className={`text-xs font-bold ${p.paid ? 'text-emerald-600' : 'text-slate-400'}`}>{p.amt}</span>
                         </div>

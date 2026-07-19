@@ -1,11 +1,12 @@
 // =====================================================
 // components/ui/Card.tsx
-// Reusable card container component
+// Design-system compliant card shell.
+// rounded-3xl + border-slate-100 + shadow-sm = premium trifecta.
+// Hover: lift + shadow-md (the universal premium interaction).
 // =====================================================
 
 import React from 'react';
 
-// Extend HTMLAttributes to allow onClick, id, style, etc.
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
@@ -18,7 +19,7 @@ export const Card: React.FC<CardProps> = ({
   className = '',
   padding = 'md',
   hover = false,
-  ...props // Spread remaining props like onClick
+  ...props
 }) => {
   const paddingStyles = {
     none: '',
@@ -27,11 +28,15 @@ export const Card: React.FC<CardProps> = ({
     lg: 'p-8',
   };
 
-  const hoverStyles = hover ? 'hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-out' : '';
+  // Hover: lift 4px + shadow upgrade + emerald border tint.
+  // This is the Stripe/Linear card hover pattern.
+  const hoverStyles = hover
+    ? 'hover:shadow-lg hover:-translate-y-1 hover:border-emerald-200/60 transition-all duration-300 ease-out cursor-pointer'
+    : '';
 
   return (
-    <div 
-      className={`bg-white border border-slate-200 rounded-xl shadow-sm ${paddingStyles[padding]} ${hoverStyles} ${className}`}
+    <div
+      className={`bg-white border border-slate-100 rounded-3xl shadow-sm ${paddingStyles[padding]} ${hoverStyles} ${className}`}
       {...props}
     >
       {children}
